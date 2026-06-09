@@ -1,7 +1,7 @@
 # 1. FÁZE: Sestavení (Build) Flutter Web aplikace
 FROM ubuntu:22.04 AS build
 
-# Instalace potřebných závislostí pro Linux
+# Instalace potřebných závislostí pro Linux (přidáno ca-certificates)
 RUN apt-get update && apt-get install -y \
     curl \
     git \
@@ -9,17 +9,22 @@ RUN apt-get update && apt-get install -y \
     xz-utils \
     zip \
     libglu1-mesa \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Stažení stabilní verze Flutter SDK
 RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter -b stable
 
+# --- OPRAVA CHYBY ---
+# Povolení bezpečného adresáře pro Git (řeší pád 'flutter doctor' v Dockeru)
+RUN git config --global --add safe.directory /usr/local/flutter
+
 # Nastavení cest do systému (PATH)
 ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
-# Ověření instalace a povolení webu
+# Ověření instalace a povolení webu (přidáno vypnutí analytiky)
 RUN flutter doctor
-RUN flutter config --enable-web
+RUN flutter config --enable-web --no-analytics
 
 # Nastavení pracovního adresáře a zkopírování kódu
 WORKDIR /app
