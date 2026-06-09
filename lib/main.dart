@@ -100,19 +100,21 @@ class HerniData {
   static String posledniSportJmeno = 'Běh venku';
   static String posledniSportInfo = '5,20 km • 28:12 min';
 
-  // Seznam svalů (odstraněny Hamstringy a Hýždě)
+  // Levely svalů
   static Map<String, int> svalyLvl = {
     'Triceps': 1,
     'Přímý sval břišní': 1,
     'Biceps': 1,
     'Stehno (Quadriceps)': 1,
     'Ramena': 1,
+    'Hamstrings': 1,
     'Prsa': 1,
+    'Hýždě': 1,
     'Záda': 1,
     'Lýtko': 1,
   };
 
-  // GLOBÁLNÍ SEZNAM TRÉNINKŮ (Nyní si aplikace pamatuje, co je splněno)
+  // Globální úložiště tréninků
   static List<Trening> vsechnyTreningy = [
     Trening(
       id: '1',
@@ -186,15 +188,14 @@ class _HlavniNavigaceState extends State<HlavniNavigace> {
     final List<Widget> _obrazovky = [
       HlavniObrazovkaAvatar(onObnoveni: _obnovitData),
       PomahejObrazovka(onObnoveni: _obnovitData),
-      MojeCviceniObrazovka(onObnoveni: _obnovitData),
+      const MojeCviceniObrazovka(),
     ];
 
     return Scaffold(
-      // Použití IndexedStack zajistí, že se stav obrazovek nevymaže při přepnutí
-      body: IndexedStack(index: _selectedIndex, children: _obrazovky),
+      body: _obrazovky[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color(0xFF1C1C1E),
-        selectedItemColor: const Color(0xFF00BFFF),
+        selectedItemColor: const Color(0xFFFF6600),
         unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex,
         type: BottomNavigationBarType.fixed,
@@ -221,8 +222,7 @@ class _HlavniNavigaceState extends State<HlavniNavigace> {
 
 // --- OBRAZOVKA: MOJE CVIČENÍ ---
 class MojeCviceniObrazovka extends StatefulWidget {
-  final VoidCallback onObnoveni;
-  const MojeCviceniObrazovka({super.key, required this.onObnoveni});
+  const MojeCviceniObrazovka({super.key});
 
   @override
   State<MojeCviceniObrazovka> createState() => _MojeCviceniObrazovkaState();
@@ -371,7 +371,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(
-                            color: Color(0xFF00BFFF),
+                            color: Color(0xFFFF6600),
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -396,7 +396,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(
-                            color: Color(0xFF00BFFF),
+                            color: Color(0xFFFF6600),
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -421,7 +421,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(
-                            color: Color(0xFF00BFFF),
+                            color: Color(0xFFFF6600),
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -445,7 +445,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                         padding: EdgeInsets.all(8.0),
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFF00BFFF),
+                            Color(0xFFFF6600),
                           ),
                         ),
                       )
@@ -455,13 +455,13 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                         decoration: BoxDecoration(
                           color: const Color(0xFF2C2C2E),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.blue, width: 1),
+                          border: Border.all(color: Colors.green, width: 1),
                         ),
                         child: Row(
                           children: const [
                             Icon(
                               Icons.check_circle,
-                              color: Colors.blue,
+                              color: Colors.green,
                               size: 18,
                             ),
                             SizedBox(width: 8),
@@ -482,8 +482,8 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                         width: double.infinity,
                         child: OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF00BFFF),
-                            side: const BorderSide(color: Color(0xFF00BFFF)),
+                            foregroundColor: const Color(0xFFFF6600),
+                            side: const BorderSide(color: Color(0xFFFF6600)),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -518,11 +518,10 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00BFFF),
-                    foregroundColor: Colors.black,
+                    backgroundColor: const Color(0xFFFF6600),
+                    foregroundColor: Colors.white,
                   ),
                   onPressed: () {
-                    // Update the state here!
                     setState(() {
                       trening.jeSplneno = true;
                       trening.narocnost = vybranaNarocnost;
@@ -536,19 +535,11 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                           ? null
                           : poznamkaController.text;
                       trening.cestaKFotce = nahranaFotkaCesta;
-
-                      // Přidání 2 coinů za splněný trénink
-                      HerniData.coiny += 2;
                     });
-
-                    widget.onObnoveni();
                     Navigator.pop(context);
-
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(
-                          'Trénink ${trening.nazev} splněn! Získáváš +2 coiny. 🎉',
-                        ),
+                        content: Text('Trénink ${trening.nazev} splněn! 🎉'),
                         backgroundColor: const Color(0xFF1C1C1E),
                       ),
                     );
@@ -568,7 +559,6 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
 
   @override
   Widget build(BuildContext context) {
-    // Filtrování globálních tréninků
     List<Trening> vsechnyPlanovane = HerniData.vsechnyTreningy
         .where((t) => !t.jeSplneno)
         .toList();
@@ -720,14 +710,9 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                         Color barvaTextu = Colors.white;
                         BoxBorder? ohraniceni;
 
-                        if (maPlan) {
-                          barvaKolecka = const Color(0xFF00BFFF);
-                          barvaTextu = Colors.black;
-                        } else if (maSplneno) {
-                          barvaKolecka = const Color(
-                            0xFF00BFFF,
-                          ).withOpacity(0.6);
-                          barvaTextu = Colors.black;
+                        if (maPlan || maSplneno) {
+                          barvaKolecka = const Color(0xFFFF6600);
+                          barvaTextu = Colors.white;
                         }
 
                         if (jeVybrany) {
@@ -740,18 +725,21 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                         return GestureDetector(
                           onTap: () => setState(() => _vybraneDatum = denDatum),
                           child: Container(
-                            alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: barvaKolecka,
                               shape: BoxShape.circle,
                               border: ohraniceni,
                             ),
-                            child: Text(
-                              '$denCislo',
-                              style: TextStyle(
-                                color: barvaTextu,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
+                            child: Align(
+                              alignment: Alignment
+                                  .center, // Opraveno na správné Alignment.center
+                              child: Text(
+                                '$denCislo',
+                                style: TextStyle(
+                                  color: barvaTextu,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
                               ),
                             ),
                           ),
@@ -784,7 +772,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                     isExpanded: true,
                     icon: const Icon(
                       Icons.arrow_drop_down,
-                      color: Color(0xFF00BFFF),
+                      color: Color(0xFFFF6600),
                     ),
                     items: _appleWatchSporty.map((sport) {
                       return DropdownMenuItem<Map<String, dynamic>>(
@@ -793,7 +781,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                           children: [
                             Icon(
                               sport['ikona'],
-                              color: const Color(0xFF00BFFF),
+                              color: const Color(0xFFFF6600),
                             ),
                             const SizedBox(width: 12),
                             Text(
@@ -817,8 +805,8 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00BFFF),
-                    foregroundColor: Colors.black,
+                    backgroundColor: const Color(0xFFFF6600),
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -831,7 +819,6 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                   ),
                   onPressed: () {
                     setState(() {
-                      // Přidání do globálního pole
                       HerniData.vsechnyTreningy.add(
                         Trening(
                           id: DateTime.now().toString(),
@@ -863,7 +850,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                           children: const [
                             Icon(
                               Icons.hourglass_empty,
-                              color: Color(0xFF00BFFF),
+                              color: Color(0xFFFF6600),
                               size: 14,
                             ),
                             SizedBox(width: 4),
@@ -903,7 +890,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                           children: const [
                             Icon(
                               Icons.check_circle_outline,
-                              color: Color(0xFF00BFFF),
+                              color: Color(0xFFFF6600),
                               size: 14,
                             ),
                             SizedBox(width: 4),
@@ -956,7 +943,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
         children: [
           Row(
             children: [
-              Icon(t.ikona, color: const Color(0xFF00BFFF), size: 20),
+              Icon(t.ikona, color: const Color(0xFFFF6600), size: 20),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -974,7 +961,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                 padding: EdgeInsets.zero,
                 icon: const Icon(
                   Icons.check_box_outline_blank,
-                  color: Color(0xFF00BFFF),
+                  color: Color(0xFFFF6600),
                   size: 22,
                 ),
                 onPressed: () => _otevriDialogSplneni(t),
@@ -999,7 +986,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
         color: const Color(0xFF1C1C1E),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: const Color(0xFF00BFFF).withValues(alpha: 0.3),
+          color: const Color(0xFFFF6600).withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -1008,7 +995,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
         children: [
           Row(
             children: [
-              Icon(t.ikona, color: const Color(0xFF00BFFF), size: 18),
+              Icon(t.ikona, color: const Color(0xFFFF6600), size: 18),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -1027,7 +1014,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
           Text(
             'Splněno: ${t.datum.day}. ${t.datum.month}. ${t.datum.year}',
             style: const TextStyle(
-              color: Color(0xFF00BFFF),
+              color: Color(0xFFFF6600),
               fontSize: 11,
               fontWeight: FontWeight.bold,
             ),
@@ -1050,7 +1037,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
             Text(
               'Poznámka: ${t.poznamka}',
               style: const TextStyle(
-                color: Color(0xFF00BFFF),
+                color: Color(0xFFFF6600),
                 fontSize: 11,
                 fontStyle: FontStyle.italic,
               ),
@@ -1062,7 +1049,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
   }
 }
 
-// --- OBRAZOVKA: MŮJ AVATAR (ČISTÁ POSTAVA A TRÉNINKOVÉ CENTRUM) ---
+// --- OBRAZOVKA: MŮJ AVATAR ---
 class HlavniObrazovkaAvatar extends StatefulWidget {
   final VoidCallback onObnoveni;
   const HlavniObrazovkaAvatar({super.key, required this.onObnoveni});
@@ -1072,24 +1059,7 @@ class HlavniObrazovkaAvatar extends StatefulWidget {
 }
 
 class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
-  String? _zvyraznenySval;
-
-  final Map<String, Alignment> poziceSvalu = {
-    'Prsa': const Alignment(-0.16, -0.39),
-    'Biceps': const Alignment(-0.32, -0.21),
-    'Přímý sval břišní': const Alignment(-0.06, -0.03),
-    'Stehno (Quadriceps)': const Alignment(-0.16, 0.36),
-    'Ramena': const Alignment(0.24, -0.50),
-    'Triceps': const Alignment(0.32, -0.21),
-    'Záda': const Alignment(0.18, -0.15),
-    'Lýtko': const Alignment(0.18, 0.72),
-  };
-
   void _vylepsiSval(String sval) {
-    setState(() {
-      _zvyraznenySval = sval;
-    });
-
     const int cenaVylepseni = 10;
     if (HerniData.coiny >= cenaVylepseni) {
       setState(() {
@@ -1107,12 +1077,6 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
     }
   }
 
-  void _vyberSvalBezUpgradu(String sval) {
-    setState(() {
-      _zvyraznenySval = sval;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -1120,7 +1084,6 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Hlavička s Coiny
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
@@ -1150,7 +1113,7 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
                       children: [
                         const Icon(
                           Icons.monetization_on,
-                          color: Color(0xFF00BFFF),
+                          color: Color(0xFFFF6600),
                           size: 18,
                         ),
                         const SizedBox(width: 4),
@@ -1169,7 +1132,6 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
               ),
             ),
 
-            // VELKÝ OBRÁZEK POSTAVY S ČERVENOU TEČKOU
             Center(
               child: Container(
                 width: double.infinity,
@@ -1179,58 +1141,31 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
                   color: const Color(0xFF1C1C1E),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Stack(
-                  children: [
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset(
-                          'assets/postava_muz.png',
-                          height: 360,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Center(
-                                child: Text(
-                                  'Zde se načte obrázek postavy',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                      'assets/postava_muz.png',
+                      height: 360,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Center(
+                            child: Text(
+                              'Zde se načte obrázek postava_muz.png',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
                               ),
-                        ),
-                      ),
-                    ),
-                    if (_zvyraznenySval != null &&
-                        poziceSvalu.containsKey(_zvyraznenySval))
-                      Positioned.fill(
-                        child: Align(
-                          alignment: poziceSvalu[_zvyraznenySval!]!,
-                          child: Container(
-                            width: 14,
-                            height: 14,
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.red.withOpacity(0.8),
-                                  blurRadius: 10,
-                                  spreadRadius: 3,
-                                ),
-                              ],
                             ),
                           ),
-                        ),
-                      ),
-                  ],
+                    ),
+                  ),
                 ),
               ),
             ),
 
             const SizedBox(height: 20),
 
-            // TRÉNINKOVÉ CENTRUM
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -1239,7 +1174,7 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
                   const Text(
                     'TRÉNINKOVÉ CENTRUM (1 upgrade = 10 coinů)',
                     style: TextStyle(
-                      color: Color(0xFF00BFFF),
+                      color: Color(0xFFFF6600),
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1263,62 +1198,51 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
                       );
                       int svalLvl = HerniData.svalyLvl[svalJmeno] ?? 1;
 
-                      bool jeAktivni = _zvyraznenySval == svalJmeno;
-
-                      return GestureDetector(
-                        onTap: () => _vyberSvalBezUpgradu(svalJmeno),
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1C1C1E),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: jeAktivni
-                                  ? Colors.red.withOpacity(0.6)
-                                  : Colors.transparent,
-                              width: 1,
+                      return Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1C1C1E),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    svalJmeno,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Lvl $svalLvl',
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      svalJmeno,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Lvl $svalLvl',
-                                      style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            IconButton(
+                              onPressed: () => _vylepsiSval(svalJmeno),
+                              icon: const Icon(
+                                Icons.add_circle,
+                                color: Color(0xFFFF6600),
+                                size: 28,
                               ),
-                              IconButton(
-                                onPressed: () => _vylepsiSval(svalJmeno),
-                                icon: const Icon(
-                                  Icons.add_circle,
-                                  color: Color(0xFF00BFFF),
-                                  size: 28,
-                                ),
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                              ),
-                            ],
-                          ),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
                         ),
                       );
                     },
@@ -1334,7 +1258,7 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
   }
 }
 
-// --- OBRAZOVKA: POMÁHEJ (NOVÁ SEKCE PRO CHARITU V LIŠTĚ) ---
+// --- OBRAZOVKA: POMÁHEJ ---
 class PomahejObrazovka extends StatefulWidget {
   final VoidCallback onObnoveni;
   const PomahejObrazovka({super.key, required this.onObnoveni});
@@ -1417,7 +1341,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                                 children: [
                                   Icon(
                                     sport['ikona'],
-                                    color: const Color(0xFF00BFFF),
+                                    color: const Color(0xFFFF6600),
                                     size: 20,
                                   ),
                                   const SizedBox(width: 10),
@@ -1444,7 +1368,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                           ? 'Pravidlo: 1 km = 1 Kč na charitu.'
                           : 'Pravidlo: 1 minuta = 1 Kč na charitu.',
                       style: const TextStyle(
-                        color: Color(0xFF00BFFF),
+                        color: Color(0xFFFF6600),
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1472,7 +1396,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(
-                            color: Color(0xFF00BFFF),
+                            color: Color(0xFFFF6600),
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -1497,7 +1421,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(
-                            color: Color(0xFF00BFFF),
+                            color: Color(0xFFFF6600),
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -1516,8 +1440,8 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00BFFF),
-                    foregroundColor: Colors.black,
+                    backgroundColor: const Color(0xFFFF6600),
+                    foregroundColor: Colors.white,
                   ),
                   onPressed: () {
                     double zadanaHodnota =
@@ -1569,6 +1493,15 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                 'Naskenuj QR kód ve své bankovní aplikaci.',
                 style: TextStyle(color: Colors.grey[400], fontSize: 13),
               ),
+              const SizedBox(height: 6),
+              Text(
+                'VS: $variabilniSymbol',
+                style: const TextStyle(
+                  color: Color(0xFFFF6600),
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(8),
@@ -1592,11 +1525,45 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00BFFF),
-                foregroundColor: Colors.black,
+                backgroundColor: const Color(0xFFFF6600),
+                foregroundColor: Colors.white,
               ),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context); // Zavřít QR dialog
+                _simulujOvereniBanky(hodnota, kc, sport, variabilniSymbol);
+              },
+              child: const Text(
+                'Mám zaplaceno',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // --- SIMULACE OVĚŘENÍ BANKOVNÍHO API ---
+  void _simulujOvereniBanky(
+    double hodnota,
+    int kc,
+    Map<String, dynamic> sport,
+    String vs,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            Future.delayed(const Duration(seconds: 3), () {
+              if (!mounted) return;
+              Navigator.pop(context); // Zavřít načítací dialog
+
+              // 85 % úspěšnost, 15 % selhání
+              bool platbaDorazila = Random().nextDouble() < 0.85;
+
+              if (platbaDorazila) {
                 setState(() {
                   if (sport['typ'] == 'kardio') HerniData.kilometry += hodnota;
                   HerniData.darovaneKoruny += kc;
@@ -1608,13 +1575,60 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                       : '${hodnota.round()} min • Příspěvek: $kc Kč';
                 });
                 widget.onObnoveni();
-              },
-              child: const Text(
-                'Mám zaplaceno',
-                style: TextStyle(fontWeight: FontWeight.bold),
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.green[800],
+                    content: Text(
+                      '✅ Bankovní API potvrdilo platbu (VS: $vs). Bylo ti připsáno ${kc * 10} coinů!',
+                    ),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.red[900],
+                    duration: const Duration(seconds: 5),
+                    content: Text(
+                      '❌ Bankovní API: Platba s VS $vs nebyla nalezena. Zkontrolujte odeslání platby.',
+                    ),
+                  ),
+                );
+              }
+            });
+
+            return AlertDialog(
+              backgroundColor: const Color(0xFF1C1C1E),
+              content: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFFFF6600),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Ověřování platby...',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Komunikuji s Bankovním API České spořitelny. Kontroluji připsání platby pod VS: $vs.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -1642,7 +1656,6 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
             ),
             const SizedBox(height: 20),
 
-            // OSOBNÍ CHARITATIVNÍ STATISTIKA
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -1673,7 +1686,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                       value: (HerniData.kilometry % 10) / 10,
                       backgroundColor: const Color(0xFF2C2C2E),
                       valueColor: const AlwaysStoppedAnimation<Color>(
-                        Color(0xFF00BFFF),
+                        Color(0xFFFF6600),
                       ),
                       minHeight: 6,
                     ),
@@ -1683,14 +1696,13 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
             ),
             const SizedBox(height: 16),
 
-            // KOMUNITNÍ CÍL
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: const Color(0xFF1C1C1E),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFF00BFFF).withValues(alpha: 0.2),
+                  color: const Color(0xFFFF6600).withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -1704,7 +1716,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                         children: const [
                           Icon(
                             Icons.public,
-                            color: Color(0xFF00BFFF),
+                            color: Color(0xFFFF6600),
                             size: 18,
                           ),
                           SizedBox(width: 8),
@@ -1723,7 +1735,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                         style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF00BFFF),
+                          color: Color(0xFFFF6600),
                         ),
                       ),
                     ],
@@ -1744,7 +1756,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                       value: komunitniProcento,
                       backgroundColor: const Color(0xFF2C2C2E),
                       valueColor: const AlwaysStoppedAnimation<Color>(
-                        Color(0xFF00BFFF),
+                        Color(0xFFFF6600),
                       ),
                       minHeight: 8,
                     ),
@@ -1755,13 +1767,12 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
 
             const SizedBox(height: 24),
 
-            // VELKÉ TLAČÍTKO SPORTOVAT
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00BFFF),
-                  foregroundColor: Colors.black,
+                  backgroundColor: const Color(0xFFFF6600),
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -1786,7 +1797,6 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
             ),
             const SizedBox(height: 10),
 
-            // KARTA POSLEDNÍ AKTIVITY
             Container(
               decoration: BoxDecoration(
                 color: const Color(0xFF1C1C1E),
@@ -1795,7 +1805,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
               child: ListTile(
                 leading: const CircleAvatar(
                   backgroundColor: Color(0xFF2C2C2E),
-                  child: Icon(Icons.directions_run, color: Color(0xFF00BFFF)),
+                  child: Icon(Icons.directions_run, color: Color(0xFFFF6600)),
                 ),
                 title: Text(
                   HerniData.posledniSportJmeno,
