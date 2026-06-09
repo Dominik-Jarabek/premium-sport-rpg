@@ -25,17 +25,18 @@ RUN flutter config --enable-web
 WORKDIR /app
 COPY . .
 
-# PŘEPNUTÍ DO PODSLOŽKY S PROJEKTEM (Zde se nachází pubspec.yaml a lib)
+# Přepnutí do podsložky a sestavení webu
 WORKDIR /app/premium_sport_rpg
-
-# Stažení balíčků a sestavení produkčního webu
 RUN flutter pub get
 RUN flutter build web --release
 
+# Speciální trik: Najdeme vygenerovanou složku 'web' a přesuneme ji na pevné místo do /app/final_web
+RUN mkdir -p /app/final_web && cp -r $(find /app/premium_sport_rpg/build -type d -name "web" | head -n 1)/* /app/final_web/
+
 # 2. FÁZE: Spuštění pomocí lehkého webového serveru Nginx
 FROM nginx:alpine
-# Kopírování zkompilovaného webu ze správné podsložky
-COPY --from=build /app/premium_sport_rpg/build/web /usr/share/nginx/html
+# Kopírujeme z garantovaného místa /app/final_web
+COPY --from=build /app/final_web /usr/share/nginx/html
 
 # Otevření portu 80 pro Render
 EXPOSE 80
