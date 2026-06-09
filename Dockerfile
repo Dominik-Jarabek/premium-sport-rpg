@@ -28,16 +28,15 @@ RUN flutter config --enable-web
 WORKDIR /app
 COPY . .
 
-# Přepnutí do podsložky, stažení balíčků a sestavení produkčního webu
-WORKDIR /app/premium_sport_rpg_app
+# Stažení balíčků a sestavení produkčního webu přímo v kořeni aplikaci
 RUN env "PATH=$PATH" flutter pub get
 RUN env "PATH=$PATH" flutter build web --release
 
 # 2. FÁZE: Spuštění pomocí lehkého webového serveru Nginx
 FROM nginx:alpine
 
-# Přesné zkopírování hotového webu z podsložky první fáze (build) přímo do Nginxu
-COPY --from=build /app/premium_sport_rpg_app/build/web /usr/share/nginx/html
+# Zkopírování hotového webu z první fáze (build) přímo do Nginxu
+COPY --from=build /app/build/web /usr/share/nginx/html
 
 # Otevření portu 80 pro Render
 EXPOSE 80
