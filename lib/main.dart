@@ -710,7 +710,13 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                         Color barvaTextu = Colors.white;
                         BoxBorder? ohraniceni;
 
-                        if (maPlan || maSplneno) {
+                        // NOVÝ UPRAVENÝ KÓD:
+                        if (maSplneno) {
+                          // Tmavě oranžová pro hotové tréninky
+                          barvaKolecka = const Color(0xFFB34700);
+                          barvaTextu = Colors.white;
+                        } else if (maPlan) {
+                          // Původní jasná oranžová pro nesplněné / naplánované tréninky
                           barvaKolecka = const Color(0xFFFF6600);
                           barvaTextu = Colors.white;
                         }
@@ -731,8 +737,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                               border: ohraniceni,
                             ),
                             child: Align(
-                              alignment: Alignment
-                                  .center, // Opraveno na správné Alignment.center
+                              alignment: Alignment.center,
                               child: Text(
                                 '$denCislo',
                                 style: TextStyle(
@@ -1100,6 +1105,40 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
                       color: Colors.white,
                     ),
                   ),
+                  const SizedBox(width: 12),
+
+                  // Úprava zobrazení loga s fallbackem, pokud soubor chybí
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        'assets/logo.png',
+                        height: 35,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'Chybí logo.png',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -1113,7 +1152,7 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
                       children: [
                         const Icon(
                           Icons.monetization_on,
-                          color: Color(0xFFFF6600),
+                          color: Color(0xFFCCFF00),
                           size: 18,
                         ),
                         const SizedBox(width: 4),
@@ -1132,6 +1171,7 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
               ),
             ),
 
+            // Hlavní grafika bez jakýchkoliv oranžových textových boxů navíc
             Center(
               child: Container(
                 width: double.infinity,
@@ -1151,7 +1191,7 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
                       errorBuilder: (context, error, stackTrace) =>
                           const Center(
                             child: Text(
-                              'Zde se načte obrázek postava_muz.png',
+                              'Obrázek postava_muz.png nebyl nalezen v assets/',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
@@ -1529,7 +1569,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                 foregroundColor: Colors.white,
               ),
               onPressed: () {
-                Navigator.pop(context); // Zavřít QR dialog
+                Navigator.pop(context);
                 _simulujOvereniBanky(hodnota, kc, sport, variabilniSymbol);
               },
               child: const Text(
@@ -1543,7 +1583,6 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
     );
   }
 
-  // --- SIMULACE OVĚŘENÍ BANKOVNÍHO API ---
   void _simulujOvereniBanky(
     double hodnota,
     int kc,
@@ -1558,9 +1597,8 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
           builder: (context, setDialogState) {
             Future.delayed(const Duration(seconds: 3), () {
               if (!mounted) return;
-              Navigator.pop(context); // Zavřít načítací dialog
+              Navigator.pop(context);
 
-              // 85 % úspěšnost, 15 % selhání
               bool platbaDorazila = Random().nextDouble() < 0.85;
 
               if (platbaDorazila) {
