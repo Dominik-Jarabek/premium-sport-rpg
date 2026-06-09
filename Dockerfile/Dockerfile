@@ -24,19 +24,15 @@ ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:/usr/
 RUN flutter doctor
 RUN flutter config --enable-web
 
-# Nastavení pracovního adresáře a zkopírování kódu
-WORKDIR /app
-COPY . .
-
 # Přepnutí do podsložky a sestavení webu
-WORKDIR /app/premium_sport_rpg
+WORKDIR /app/premium_sport_rpg_app
 
 # Spuštění s explicitním zachováním PATH prostředí pro Flutter i Git
 RUN env "PATH=$PATH" flutter pub get
 RUN env "PATH=$PATH" flutter build web --release
 
 # Speciální trik: Najdeme vygenerovanou složku 'web' a přesuneme ji na pevné místo do /app/final_web
-RUN mkdir -p /app/final_web && cp -r $(find /app/premium_sport_rpg/build -type d -name "web" | head -n 1)/* /app/final_web/
+RUN mkdir -p /app/final_web && cp -r $(find /app/premium_sport_rpg_app/build -type d -name "web" | head -n 1)/* /app/final_web/
 
 # 2. FÁZE: Spuštění pomocí lehkého webového serveru Nginx
 FROM nginx:alpine
