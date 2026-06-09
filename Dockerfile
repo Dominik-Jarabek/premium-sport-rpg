@@ -28,9 +28,12 @@ RUN flutter config --enable-web
 WORKDIR /app
 COPY . .
 
-# Stažení balíčků a sestavení produkčního webu přímo v kořeni aplikaci
+# Stažení balíčků a sestavení produkčního webu přímo v kořeni aplikace
 RUN env "PATH=$PATH" flutter pub get
 RUN env "PATH=$PATH" flutter build web --release
+
+# POMOCNÝ KROK: Diagnostika struktury pro ověření cest
+RUN ls -la /app && ls -la /app/build || true
 
 # 2. FÁZE: Spuštění pomocí lehkého webového serveru Nginx
 FROM nginx:alpine
