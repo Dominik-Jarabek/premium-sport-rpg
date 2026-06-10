@@ -391,6 +391,11 @@ class _HlavniNavigaceState extends State<HlavniNavigace> {
               activeIcon: Icon(Icons.bar_chart),
               label: 'Mé Statistiky',
             ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart_outlined),
+              activeIcon: Icon(Icons.bar_chart),
+              label: 'Žebříčky',
+            ),
           ],
         ),
       ),
