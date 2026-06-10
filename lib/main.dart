@@ -389,7 +389,7 @@ class _HlavniNavigaceState extends State<HlavniNavigace> {
             BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart_outlined),
               activeIcon: Icon(Icons.bar_chart),
-              label: 'Statistiky',
+              label: 'Mé Statistiky',
             ),
           ],
         ),
