@@ -112,27 +112,57 @@ class _HexBadge extends StatelessWidget {
   const _HexBadge({required this.value});
 
   @override
-  Widget build(BuildContext context) => CustomPaint(
-    painter: _HexPainter(
-      fillColor: _C.card,
-      strokeColor: _C.gold,
-      strokeWidth: 1.8,
-    ),
-    child: SizedBox(
-      width: 78,
-      height: 58,
-      child: Center(
-        child: Text(
-          '\$ $value',
-          style: const TextStyle(
-            color: _C.gold,
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-          ),
+  Widget build(BuildContext context) {
+    // Responsivní velikost písma dle šířky obrazovky
+    final sw = MediaQuery.of(context).size.width;
+    final fs = sw < 360 ? 11.0 : 13.0;
+    final label = '\$ $value';
+    // Šířka = délka textu × šířka znaku + vnitřní mezera (padding) na každou stranu
+    final textW = label.length * (fs * 0.68);
+    final padH = 20.0; // horizontální padding uvnitř hexagonu
+    final padV = 10.0; // vertikální padding
+    final w = (textW + padH * 2).clamp(60.0, 140.0);
+    final h = fs * 2 + padV * 2;
+
+    return CustomPaint(
+      painter: _HexPainter(
+        fillColor: _C.card,
+        strokeColor: _C.gold,
+        strokeWidth: 1.6,
+      ),
+      child: SizedBox(
+        width: w,
+        height: h,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '\$',
+              style: TextStyle(
+                color: _C.gold,
+                fontWeight: FontWeight.bold,
+                fontSize: fs,
+              ),
+            ),
+            const SizedBox(width: 2),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '$value',
+                style: TextStyle(
+                  color: _C.gold,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fs,
+                  letterSpacing: .3,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _HexPainter extends CustomPainter {
@@ -231,15 +261,24 @@ enum VzacnostTyp {
 }
 
 enum TypPredmetu {
-  triko('Triko', '👕'),
-  kalhoty('Kalhoty', '👖'),
-  boty('Boty', '👟'),
-  cepice('Čepice', '🧢'),
-  rukavice('Rukavice', '🥊');
+  triko('Triko', '👕', 'assets/ikony/triko.png'),
+  kalhoty('Kalhoty', '👖', 'assets/ikony/kalhoty.png'),
+  boty('Boty', '👟', 'assets/ikony/boty.png'),
+  cepice('Čepice', '🧢', 'assets/ikony/cepice.png'),
+  rukavice('Rukavice', '🥊', 'assets/ikony/rukavice.png');
 
   final String nazev;
   final String emoji;
-  const TypPredmetu(this.nazev, this.emoji);
+  final String ikonaPath;
+  const TypPredmetu(this.nazev, this.emoji, this.ikonaPath);
+
+  Widget ikonaWidget({double size = 22}) => Image.asset(
+    ikonaPath,
+    width: size,
+    height: size,
+    errorBuilder: (_, __, ___) =>
+        Text(emoji, style: TextStyle(fontSize: size * .85)),
+  );
 }
 
 class PredmetObchodu {
@@ -258,7 +297,7 @@ class PredmetObchodu {
 }
 
 const List<PredmetObchodu> _katalog = [
-  // ── TRIKO ───────────────────────────────────────────────
+  // ── TRIKO (t1–t4) ───────────────────────────────────────
   PredmetObchodu(
     id: 't1',
     nazev: 'Triko Base',
@@ -291,7 +330,7 @@ const List<PredmetObchodu> _katalog = [
     vzacnost: VzacnostTyp.legendarni,
     cena: 900,
   ),
-  // ── KALHOTY ─────────────────────────────────────────────
+  // ── KALHOTY (k1–k4) ─────────────────────────────────────
   PredmetObchodu(
     id: 'k1',
     nazev: 'Kraťasy Base',
@@ -316,7 +355,15 @@ const List<PredmetObchodu> _katalog = [
     vzacnost: VzacnostTyp.epicke,
     cena: 450,
   ),
-  // ── BOTY ────────────────────────────────────────────────
+  PredmetObchodu(
+    id: 'k4',
+    nazev: 'Legíny Legend',
+    popis: 'Legendární kompresní legíny.',
+    typ: TypPredmetu.kalhoty,
+    vzacnost: VzacnostTyp.legendarni,
+    cena: 950,
+  ),
+  // ── BOTY (b1–b4) ────────────────────────────────────────
   PredmetObchodu(
     id: 'b1',
     nazev: 'Boty Base',
@@ -335,13 +382,21 @@ const List<PredmetObchodu> _katalog = [
   ),
   PredmetObchodu(
     id: 'b3',
+    nazev: 'Boty Elite',
+    popis: 'Prémiová závodní obuv Elite Series.',
+    typ: TypPredmetu.boty,
+    vzacnost: VzacnostTyp.epicke,
+    cena: 420,
+  ),
+  PredmetObchodu(
+    id: 'b4',
     nazev: 'Boty Legend',
     popis: 'Limitovaná edice Legend.',
     typ: TypPredmetu.boty,
     vzacnost: VzacnostTyp.legendarni,
-    cena: 700,
+    cena: 850,
   ),
-  // ── ČEPICE ──────────────────────────────────────────────
+  // ── ČEPICE (c1–c4) ──────────────────────────────────────
   PredmetObchodu(
     id: 'c1',
     nazev: 'Kšiltovka Base',
@@ -352,15 +407,39 @@ const List<PredmetObchodu> _katalog = [
   ),
   PredmetObchodu(
     id: 'c2',
-    nazev: 'Čepice Elite',
-    popis: 'Prémiová sportovní čepice.',
+    nazev: 'Čepice Sport',
+    popis: 'Funkční sportovní čepice.',
     typ: TypPredmetu.cepice,
     vzacnost: VzacnostTyp.vzacne,
     cena: 160,
   ),
-  // ── RUKAVICE ────────────────────────────────────────────
+  PredmetObchodu(
+    id: 'c3',
+    nazev: 'Čepice Elite',
+    popis: 'Prémiová čepice Elite Series.',
+    typ: TypPredmetu.cepice,
+    vzacnost: VzacnostTyp.epicke,
+    cena: 350,
+  ),
+  PredmetObchodu(
+    id: 'c4',
+    nazev: 'Čepice Legend',
+    popis: 'Legendární edice s unikátním znakem.',
+    typ: TypPredmetu.cepice,
+    vzacnost: VzacnostTyp.legendarni,
+    cena: 800,
+  ),
+  // ── RUKAVICE (r1–r4) ────────────────────────────────────
   PredmetObchodu(
     id: 'r1',
+    nazev: 'Rukavice Base',
+    popis: 'Základní tréninkové rukavice.',
+    typ: TypPredmetu.rukavice,
+    vzacnost: VzacnostTyp.zakladni,
+    cena: 55,
+  ),
+  PredmetObchodu(
+    id: 'r2',
     nazev: 'Rukavice Sport',
     popis: 'Tréninkové rukavice se vzorem.',
     typ: TypPredmetu.rukavice,
@@ -368,12 +447,20 @@ const List<PredmetObchodu> _katalog = [
     cena: 130,
   ),
   PredmetObchodu(
-    id: 'r2',
+    id: 'r3',
     nazev: 'Rukavice Elite',
     popis: 'Prémiové závodní rukavice.',
     typ: TypPredmetu.rukavice,
     vzacnost: VzacnostTyp.epicke,
     cena: 320,
+  ),
+  PredmetObchodu(
+    id: 'r4',
+    nazev: 'Rukavice Legend',
+    popis: 'Legendární rukavice šampionů.',
+    typ: TypPredmetu.rukavice,
+    vzacnost: VzacnostTyp.legendarni,
+    cena: 780,
   ),
 ];
 
@@ -404,9 +491,7 @@ class _SplashObrazovkaState extends State<SplashObrazovka>
   late Animation<double> _logoScale;
   late Animation<double> _logoOpacity;
   late Animation<double> _glowOpacity;
-  late Animation<double> _nazevOpacity;
   late Animation<double> _sloganOpacity;
-  late Animation<double> _nazevY;
 
   @override
   void initState() {
@@ -434,20 +519,6 @@ class _SplashObrazovkaState extends State<SplashObrazovka>
       CurvedAnimation(
         parent: _ctrl,
         curve: const Interval(0.05, 0.50, curve: Curves.elasticOut),
-      ),
-    );
-
-    _nazevOpacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _ctrl,
-        curve: const Interval(0.42, 0.62, curve: Curves.easeOut),
-      ),
-    );
-
-    _nazevY = Tween<double>(begin: 14, end: 0).animate(
-      CurvedAnimation(
-        parent: _ctrl,
-        curve: const Interval(0.42, 0.65, curve: Curves.easeOut),
       ),
     );
 
@@ -546,24 +617,6 @@ class _SplashObrazovkaState extends State<SplashObrazovka>
                   ),
 
                   const SizedBox(height: 28),
-
-                  // Název aplikace
-                  Opacity(
-                    opacity: _nazevOpacity.value,
-                    child: Transform.translate(
-                      offset: Offset(0, _nazevY.value),
-                      child: const Text(
-                        'Sport RPG',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic,
-                          color: Color(0xFFF0E4CC),
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
 
                   const SizedBox(height: 12),
 
@@ -762,6 +815,32 @@ class HerniData {
     final m1 = RegExp(r'(\d+)').firstMatch(clean);
     return m1 != null ? int.tryParse(m1.group(1)!) ?? 0 : 0;
   }
+
+  // ── SYSTÉM LEVELŮ ─────────────────────────────────────
+  // Level = (nejnižší sval ~/ 5) + 1 → všechny na 5 = level 2, všechny na 10 = level 3 …
+  static int get level {
+    if (svalyLvl.isEmpty) return 1;
+    final minSval = svalyLvl.values.reduce((a, b) => a < b ? a : b);
+    return (minSval ~/ 5) + 1;
+  }
+
+  // Kolik levelů chybí nejslabšímu svalu do dalšího milníku (0–4)
+  static int get progressNaLevel {
+    if (svalyLvl.isEmpty) return 0;
+    final minSval = svalyLvl.values.reduce((a, b) => a < b ? a : b);
+    return minSval % 5;
+  }
+
+  // Titul podle levelu
+  static String get levelTitul {
+    final l = level;
+    if (l <= 1) return 'Nováček';
+    if (l <= 3) return 'Sportovec';
+    if (l <= 5) return 'Veterán';
+    if (l <= 8) return 'Elita';
+    if (l <= 12) return 'Šampión';
+    return 'Legenda';
+  }
 }
 
 // ═════════════════ ŽEBŘÍČEK DATA ════════════════════════
@@ -771,29 +850,37 @@ class _Hrac {
   final double km;
   final int treninky;
   final Color barva;
-  const _Hrac(this.jmeno, this.coiny, this.km, this.treninky, this.barva);
+  final int level;
+  const _Hrac(
+    this.jmeno,
+    this.coiny,
+    this.km,
+    this.treninky,
+    this.barva,
+    this.level,
+  );
 }
 
 final List<_Hrac> _globalZebricek = [
-  const _Hrac('Martin K.', 580, 142.5, 48, Color(0xFF5B8DD9)),
-  const _Hrac('Jana P.', 445, 98.3, 38, Color(0xFFD95B8D)),
-  const _Hrac('Petr N.', 390, 87.2, 32, Color(0xFF5BD9A4)),
-  const _Hrac('Lucie H.', 355, 72.8, 29, Color(0xFFD9A45B)),
-  const _Hrac('Tomáš V.', 320, 67.5, 26, Color(0xFF8D5BD9)),
-  const _Hrac('Eva M.', 285, 58.1, 23, Color(0xFFD95B5B)),
-  const _Hrac('Pavel R.', 260, 52.4, 21, Color(0xFF5BD95B)),
-  const _Hrac('Kateřina B.', 230, 45.9, 18, Color(0xFF5BB8D9)),
-  const _Hrac('Jakub F.', 210, 42.3, 17, Color(0xFFD9C45B)),
-  const _Hrac('Monika S.', 185, 38.7, 15, Color(0xFFD95BAA)),
-  const _Hrac('David K.', 165, 35.2, 13, Color(0xFF5BD9C4)),
-  const _Hrac('Tereza V.', 145, 30.8, 12, Color(0xFFAA5BD9)),
+  const _Hrac('Martin K.', 580, 142.5, 48, Color(0xFF5B8DD9), 9),
+  const _Hrac('Jana P.', 445, 98.3, 38, Color(0xFFD95B8D), 7),
+  const _Hrac('Petr N.', 390, 87.2, 32, Color(0xFF5BD9A4), 6),
+  const _Hrac('Lucie H.', 355, 72.8, 29, Color(0xFFD9A45B), 5),
+  const _Hrac('Tomáš V.', 320, 67.5, 26, Color(0xFF8D5BD9), 5),
+  const _Hrac('Eva M.', 285, 58.1, 23, Color(0xFFD95B5B), 4),
+  const _Hrac('Pavel R.', 260, 52.4, 21, Color(0xFF5BD95B), 4),
+  const _Hrac('Kateřina B.', 230, 45.9, 18, Color(0xFF5BB8D9), 3),
+  const _Hrac('Jakub F.', 210, 42.3, 17, Color(0xFFD9C45B), 3),
+  const _Hrac('Monika S.', 185, 38.7, 15, Color(0xFFD95BAA), 2),
+  const _Hrac('David K.', 165, 35.2, 13, Color(0xFF5BD9C4), 2),
+  const _Hrac('Tereza V.', 145, 30.8, 12, Color(0xFFAA5BD9), 1),
 ];
 
 final List<_Hrac> _pratelZebricek = [
-  const _Hrac('Tomáš V.', 320, 67.5, 26, Color(0xFF8D5BD9)),
-  const _Hrac('Eva M.', 285, 58.1, 23, Color(0xFFD95B5B)),
-  const _Hrac('Pavel R.', 260, 52.4, 21, Color(0xFF5BD95B)),
-  const _Hrac('Kateřina B.', 230, 45.9, 18, Color(0xFF5BB8D9)),
+  const _Hrac('Tomáš V.', 320, 67.5, 26, Color(0xFF8D5BD9), 5),
+  const _Hrac('Eva M.', 285, 58.1, 23, Color(0xFFD95B5B), 4),
+  const _Hrac('Pavel R.', 260, 52.4, 21, Color(0xFF5BD95B), 4),
+  const _Hrac('Kateřina B.', 230, 45.9, 18, Color(0xFF5BB8D9), 3),
 ];
 
 // ═════════════════ CUSTOM NAV ITEM ══════════════════════
@@ -962,7 +1049,7 @@ class StatistikyObrazovka extends StatelessWidget {
           title: const Text(
             'Statistiky & Žebříček',
             style: TextStyle(
-              color: _C.text,
+              color: _C.gold,
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic,
               fontSize: 20,
@@ -1473,7 +1560,6 @@ class _LeaderboardList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Vložit aktuálního uživatele a seřadit — km pouze z kardio
     final kmCviceni = HerniData.vsechnyTreninky
         .where((t) => t.jeSplneno && t.typ == 'kardio')
         .fold(0.0, (sum, t) => sum + HerniData.parseKm(t.vykon));
@@ -1483,13 +1569,12 @@ class _LeaderboardList extends StatelessWidget {
       kmCviceni + HerniData.kilometry,
       HerniData.vsechnyTreninky.where((t) => t.jeSplneno).length,
       _C.gold,
+      HerniData.level,
     );
     final vsichni = [...seznam];
-    // Přidáme uživatele jen pokud tam ještě není
-    if (!vsichni.any((h) => h.jmeno == HerniData.jmeno)) {
+    if (!vsichni.any((h) => h.jmeno == HerniData.jmeno))
       vsichni.add(aktualniHrac);
-    }
-    vsichni.sort((a, b) => b.coiny.compareTo(a.coiny));
+    vsichni.sort((a, b) => b.level.compareTo(a.level));
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -1528,7 +1613,7 @@ class _LeaderboardList extends StatelessWidget {
                   ),
                 ),
               ),
-              // Avatar
+              // Avatar kruh
               Container(
                 width: 36,
                 height: 36,
@@ -1556,7 +1641,7 @@ class _LeaderboardList extends StatelessWidget {
                   children: [
                     Text(
                       h.jmeno,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: _C.text,
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
@@ -1569,21 +1654,33 @@ class _LeaderboardList extends StatelessWidget {
                   ],
                 ),
               ),
-              // Coiny
+              // LEVEL (hlavní metrika žebříčku)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    '${h.coiny}',
-                    style: const TextStyle(
-                      color: _C.gold,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        'Lvl',
+                        style: TextStyle(
+                          color: h.barva.withValues(alpha: .7),
+                          fontSize: 11,
+                        ),
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        '${h.level}',
+                        style: TextStyle(
+                          color: h.barva,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                        ),
+                      ),
+                    ],
                   ),
-                  const Text(
-                    'coinů',
-                    style: TextStyle(color: _C.textS, fontSize: 10),
+                  Text(
+                    '${h.coiny} coinů',
+                    style: const TextStyle(color: _C.textS, fontSize: 10),
                   ),
                 ],
               ),
@@ -1683,7 +1780,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
           ),
           title: Text(
             'Dokončit: ${trening.nazev}',
-            style: const TextStyle(fontWeight: FontWeight.bold, color: _C.text),
+            style: const TextStyle(fontWeight: FontWeight.bold, color: _C.gold),
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -1926,7 +2023,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 fontStyle: FontStyle.italic,
-                color: _C.text,
+                color: _C.gold,
               ),
             ),
             const SizedBox(height: 16),
@@ -1944,7 +2041,7 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.chevron_left, color: _C.text),
+                        icon: const Icon(Icons.chevron_left, color: _C.gold),
                         onPressed: () => setState(
                           () => _aktualniMesic = DateTime(
                             _aktualniMesic.year,
@@ -1958,11 +2055,11 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: _C.text,
+                          color: _C.gold,
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.chevron_right, color: _C.text),
+                        icon: const Icon(Icons.chevron_right, color: _C.gold),
                         onPressed: () => setState(
                           () => _aktualniMesic = DateTime(
                             _aktualniMesic.year,
@@ -2323,12 +2420,19 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
   void _vylepsiSval(String sval) {
     const int cena = 10;
     if (HerniData.coiny >= cena) {
+      final stareLvl = HerniData.level;
       setState(() {
         HerniData.coiny -= cena;
         HerniData.svalyLvl[sval] = (HerniData.svalyLvl[sval] ?? 1) + 1;
         _aktivniSval = sval;
       });
       widget.onObnoveni();
+      // Zkontrolovat level-up
+      if (HerniData.level > stareLvl) {
+        Future.delayed(const Duration(milliseconds: 400), () {
+          if (mounted) _ukazLevelUp(HerniData.level);
+        });
+      }
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) setState(() => _aktivniSval = null);
       });
@@ -2343,6 +2447,87 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
     }
   }
 
+  void _ukazLevelUp(int novaUroven) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _C.card,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        content: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('🏆', style: TextStyle(fontSize: 52)),
+              const SizedBox(height: 8),
+              const Text(
+                'LEVEL UP!',
+                style: TextStyle(
+                  color: _C.gold,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  letterSpacing: 2,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Level $novaUroven',
+                style: const TextStyle(
+                  color: _C.text,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 40,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                HerniData.levelTitul,
+                style: TextStyle(
+                  color: _C.gold.withValues(alpha: .7),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: _C.gold.withValues(alpha: .08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: _C.gold.withValues(alpha: .25)),
+                ),
+                child: const Text(
+                  'Všechny svaly dosáhly dalšího milníku!\nNásledující cíl: +5 ke každému svalu.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: _C.textS, fontSize: 12),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _C.gold,
+                    foregroundColor: _C.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text(
+                    'Skvělé! 💪',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _editJmeno() {
     final ctrl = TextEditingController(text: HerniData.jmeno);
     showDialog(
@@ -2352,7 +2537,7 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text(
           'Změnit jméno',
-          style: TextStyle(color: _C.text, fontWeight: FontWeight.bold),
+          style: TextStyle(color: _C.gold, fontWeight: FontWeight.bold),
         ),
         content: TextField(
           controller: ctrl,
@@ -2410,29 +2595,80 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
             // ── HEADER ──────────────────────────────────────────
             Container(
               color: _C.card,
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Row(
                 children: [
-                  // Jméno + edit
+                  // Jméno + edit + level
                   GestureDetector(
                     onTap: _editJmeno,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          HerniData.jmeno,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.italic,
-                            color: _C.text,
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              HerniData.jmeno,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                                color: _C.gold,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.edit_outlined,
+                              size: 13,
+                              color: _C.gold,
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 5),
-                        const Icon(
-                          Icons.edit_outlined,
-                          size: 14,
-                          color: _C.textS,
+                        const SizedBox(height: 3),
+                        // Level badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _C.gold.withValues(alpha: .12),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: _C.gold.withValues(alpha: .4),
+                              width: .8,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Lvl ${HerniData.level}',
+                                style: const TextStyle(
+                                  color: _C.gold,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              // Progress bar do dalšího levelu
+                              SizedBox(
+                                width: 36,
+                                height: 4,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(2),
+                                  child: LinearProgressIndicator(
+                                    value: HerniData.progressNaLevel / 5,
+                                    backgroundColor: _C.border,
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                          _C.gold,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -2470,14 +2706,20 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
               ),
             ),
 
+            // ── POSTAVA + OBLEČENÉ ──────────────────────────────
             // ── POSTAVA ─────────────────────────────────────────
-            _PostavaSeLabely(
-              svalyLvl: HerniData.svalyLvl,
-              aktivniSval: _aktivniSval,
+            Center(
+              child: FractionallySizedBox(
+                widthFactor: 0.82,
+                child: _PostavaSeLabely(
+                  svalyLvl: HerniData.svalyLvl,
+                  aktivniSval: _aktivniSval,
+                ),
+              ),
             ),
 
-            // ── OBLEČENÉ PŘEDMĚTY VEDLE POSTAVY ─────────────────
-            if (HerniData.oblecene.isNotEmpty) _OblecenePanel(),
+            // ── OBLEČENÉ POD FOTKOU ──────────────────────────────
+            _ObleceneRadek(),
 
             // ── BATOH TLAČÍTKO ───────────────────────────────────
             Padding(
@@ -2499,7 +2741,13 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
                   ),
                   child: Row(
                     children: [
-                      const Text('🎒', style: TextStyle(fontSize: 18)),
+                      Image.asset(
+                        'assets/batoh.png',
+                        width: 28,
+                        height: 28,
+                        errorBuilder: (_, __, ___) =>
+                            const Text('🎒', style: TextStyle(fontSize: 22)),
+                      ),
                       const SizedBox(width: 10),
                       const Text(
                         'Batoh',
@@ -2548,9 +2796,9 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 2.4,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                          childAspectRatio: 3.2,
                         ),
                     itemCount: HerniData.svalyLvl.length,
                     itemBuilder: (ctx, i) {
@@ -2582,94 +2830,277 @@ class _PostavaSeLabely extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 370,
-      margin: const EdgeInsets.fromLTRB(14, 14, 14, 0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
-        gradient: const RadialGradient(
-          center: Alignment(0, -0.1),
-          radius: 0.85,
-          colors: [Color(0xFFF8F3EC), Color(0xFFEDE5D8)],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: _C.gold.withValues(alpha: .07),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: LayoutBuilder(
-          builder: (ctx, c) {
-            final w = c.maxWidth;
-            final h = c.maxHeight;
-            return Stack(
-              children: [
-                // Jemná zlatá záře za postavou
-                Positioned(
-                  left: w * .25,
-                  top: h * .08,
-                  width: w * .50,
-                  height: h * .75,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFFC4974A).withValues(alpha: .10),
-                          blurRadius: 60,
-                          spreadRadius: 20,
-                        ),
-                      ],
-                    ),
+    return AspectRatio(
+      aspectRatio: 1.0, // čtverec
+      child: Stack(
+        children: [
+          // Zlatý glow stín
+          Positioned.fill(
+            child: Container(
+              margin: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: _C.gold.withValues(alpha: .28),
+                    blurRadius: 18,
+                    spreadRadius: 2,
                   ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: .08),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Zlatý rámeček + fotka (bez mezer)
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFFEDD47A),
+                    Color(0xFFC4974A),
+                    Color(0xFFAD7C2E),
+                    Color(0xFFD4A855),
+                    Color(0xFFEDD47A),
+                  ],
+                  stops: [0.0, 0.3, 0.5, 0.75, 1.0],
                 ),
-                // Obrázek postavy
-                Center(
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(1.8),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
                   child: Image.asset(
                     'assets/postava_muz.png',
-                    height: h * .90,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover, // vyplní celý rámeček bez mezer
+                    alignment: Alignment.topCenter,
                     errorBuilder: (c, e, s) => PostavaWidget(
                       svalyLvl: svalyLvl,
                       aktivniSval: aktivniSval,
                     ),
                   ),
                 ),
-                // Spodní gradient — splývání s pozadím aplikace
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 55,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(22),
-                        bottomRight: Radius.circular(22),
-                      ),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          _C.bg.withValues(alpha: .65),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+              ),
+            ),
+          ),
+
+          // Rohové ozdoby
+          Positioned.fill(
+            child: IgnorePointer(
+              child: CustomPaint(
+                painter: _RohyPainter(const Color(0xFFEDD47A)),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+}
+
+// Kreslí rohové L-ozdoby přes celý widget
+class _RohyPainter extends CustomPainter {
+  final Color color;
+  const _RohyPainter(this.color);
+  @override
+  void paint(Canvas canvas, Size s) {
+    final p = Paint()
+      ..color = color
+      ..strokeWidth = 2.0
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+    const len = 18.0;
+    const off = 10.0;
+    // Top-left
+    canvas.drawLine(Offset(off, off + len), Offset(off, off), p);
+    canvas.drawLine(Offset(off, off), Offset(off + len, off), p);
+    // Top-right
+    canvas.drawLine(
+      Offset(s.width - off - len, off),
+      Offset(s.width - off, off),
+      p,
+    );
+    canvas.drawLine(
+      Offset(s.width - off, off),
+      Offset(s.width - off, off + len),
+      p,
+    );
+    // Bottom-left
+    canvas.drawLine(
+      Offset(off, s.height - off - len),
+      Offset(off, s.height - off),
+      p,
+    );
+    canvas.drawLine(
+      Offset(off, s.height - off),
+      Offset(off + len, s.height - off),
+      p,
+    );
+    // Bottom-right
+    canvas.drawLine(
+      Offset(s.width - off - len, s.height - off),
+      Offset(s.width - off, s.height - off),
+      p,
+    );
+    canvas.drawLine(
+      Offset(s.width - off, s.height - off),
+      Offset(s.width - off, s.height - off - len),
+      p,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_) => false;
+}
+
+// Oblečené předměty v řádku pod fotkou
+class _ObleceneRadek extends StatelessWidget {
+  const _ObleceneRadek();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(14, 10, 14, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: _C.card,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: _C.border),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: TypPredmetu.values.map((typ) {
+          final id = HerniData.oblecene[typ.nazev];
+          final predmet = id != null
+              ? _katalog.where((p) => p.id == id).firstOrNull
+              : null;
+
+          Widget ikonka;
+          if (predmet != null) {
+            ikonka = ClipRRect(
+              borderRadius: BorderRadius.circular(11),
+              child: Image.asset(
+                'assets/obleceni/${predmet.id}.png',
+                width: 64,
+                height: 64,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Center(
+                  child: Text(
+                    predmet.typ.emoji,
+                    style: const TextStyle(fontSize: 40),
+                  ),
+                ),
+              ),
+            );
+          } else {
+            ikonka = ClipRRect(
+              borderRadius: BorderRadius.circular(11),
+              child: Container(
+                color: _C.card2,
+                padding: const EdgeInsets.all(4),
+                child: Image.asset(
+                  typ.ikonaPath,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Center(
+                    child: Text(
+                      typ.emoji,
+                      style: const TextStyle(fontSize: 42),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: predmet != null
+                        ? predmet.vzacnost.barva.withValues(alpha: .40)
+                        : _C.border,
+                    width: predmet != null ? 1.3 : 1.0,
+                  ),
+                  boxShadow: predmet != null
+                      ? [
+                          BoxShadow(
+                            color: predmet.vzacnost.barva.withValues(
+                              alpha: .15,
+                            ),
+                            blurRadius: 5,
+                          ),
+                        ]
+                      : null,
+                ),
+                child: ikonka,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                typ.nazev,
+                style: const TextStyle(color: _C.textS, fontSize: 9),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// Rohová ozdoba (L-tvar)
+class _RohPainter extends CustomPainter {
+  final Color color;
+  final double stroke;
+  final bool flipH, flipV;
+  const _RohPainter(
+    this.color,
+    this.stroke, {
+    this.flipH = false,
+    this.flipV = false,
+  });
+
+  @override
+  void paint(Canvas canvas, Size s) {
+    final p = Paint()
+      ..color = color
+      ..strokeWidth = stroke
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+    final len = s.width * .65;
+    final x = flipH ? s.width : 0.0;
+    final y = flipV ? s.height : 0.0;
+    final dx = flipH ? -1.0 : 1.0;
+    final dy = flipV ? -1.0 : 1.0;
+    // Vodorovná čára
+    canvas.drawLine(Offset(x, y), Offset(x + dx * len, y), p);
+    // Svislá čára
+    canvas.drawLine(Offset(x, y), Offset(x, y + dy * len), p);
+    // Malý čtvereček v rohu
+    canvas.drawCircle(
+      Offset(x, y),
+      stroke * 1.2,
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.fill,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_) => false;
 }
 
 // ═════════════════ SVAL KARTA (animovaná) ════════════════
@@ -2724,84 +3155,134 @@ class _SvalKartaState extends State<_SvalKarta>
   }
 
   @override
-  Widget build(BuildContext context) => ClipRRect(
-    borderRadius: BorderRadius.circular(14),
-    child: CustomPaint(
-      painter: _WavePainter(),
+  Widget build(BuildContext context) {
+    final lvl = widget.lvl;
+    final progress = lvl % 5 == 0 ? 1.0 : (lvl % 5) / 5.0;
+    final tierColor = lvl <= 2
+        ? const Color(0xFF8FA8B8)
+        : lvl <= 4
+        ? const Color(0xFF5B9BD5)
+        : lvl <= 5
+        ? const Color(0xFFAB47BC)
+        : _C.gold;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
       child: Container(
-        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: _C.card,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: _C.border),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: lvl > 1 ? tierColor.withValues(alpha: .35) : _C.border,
+          ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Stack(
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.nazev,
-                    style: const TextStyle(
-                      color: _C.text,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+            // Barevný levý pruh
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: 3,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
                   ),
-                  const SizedBox(height: 3),
-                  Text(
-                    'Lvl ${widget.lvl}',
-                    style: TextStyle(
-                      color: widget.lvl > 1 ? _C.gold : _C.textS,
-                      fontSize: 11,
-                      fontWeight: widget.lvl > 1
-                          ? FontWeight.bold
-                          : FontWeight.normal,
+                  color: tierColor.withValues(alpha: .8),
+                ),
+              ),
+            ),
+            // Obsah
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 6, 8, 6),
+              child: Row(
+                children: [
+                  // Text + progress
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.nazev,
+                          style: const TextStyle(
+                            color: _C.text,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 3),
+                        Row(
+                          children: [
+                            Text(
+                              'Lvl $lvl',
+                              style: TextStyle(
+                                color: tierColor,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(2),
+                                child: LinearProgressIndicator(
+                                  value: progress == 0 && lvl > 1
+                                      ? 1.0
+                                      : progress,
+                                  minHeight: 3,
+                                  backgroundColor: _C.border,
+                                  valueColor: AlwaysStoppedAnimation(tierColor),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  // + tlačítko
+                  ScaleTransition(
+                    scale: _scale,
+                    child: GestureDetector(
+                      onTap: _onTap,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: _btnColor(),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: _C.gold.withValues(
+                              alpha: lvl > 1 ? .75 : .35,
+                            ),
+                          ),
+                          boxShadow: lvl > 1
+                              ? [
+                                  BoxShadow(
+                                    color: _C.gold.withValues(alpha: .20),
+                                    blurRadius: 5,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: const Icon(Icons.add, color: _C.gold, size: 16),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            ScaleTransition(
-              scale: _scale,
-              child: GestureDetector(
-                onTap: _onTap,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: _btnColor(),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: _C.gold.withValues(
-                        alpha: widget.lvl > 1 ? .80 : .38,
-                      ),
-                      width: widget.lvl > 1 ? 1.5 : 1.0,
-                    ),
-                    boxShadow: widget.lvl > 1
-                        ? [
-                            BoxShadow(
-                              color: _C.gold.withValues(alpha: .25),
-                              blurRadius: 6,
-                              spreadRadius: 0,
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: const Icon(Icons.add, color: _C.gold, size: 20),
-                ),
-              ),
-            ),
           ],
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 // ═════════════════ POMÁHEJ ═══════════════════════════════
@@ -2861,7 +3342,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
             title: const Text(
               'Zapiš aktivitu',
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold, color: _C.text),
+              style: TextStyle(fontWeight: FontWeight.bold, color: _C.gold),
             ),
             content: SingleChildScrollView(
               child: Column(
@@ -3014,7 +3495,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
         title: Text(
           'Příspěvek $kc Kč',
           textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.bold, color: _C.text),
+          style: const TextStyle(fontWeight: FontWeight.bold, color: _C.gold),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -3171,7 +3652,7 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 fontStyle: FontStyle.italic,
-                color: _C.text,
+                color: _C.gold,
               ),
             ),
             const SizedBox(height: 18),
@@ -3345,6 +3826,9 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
 }
 
 // ═══════════════════ OBLEČENÍ IKONKA ═════════════════════
+// Obrázky předmětů: přidej soubory do assets/obleceni/{id}.png
+// Např. assets/obleceni/t1.png, assets/obleceni/k2.png, assets/obleceni/b3.png ...
+// Pokud soubor neexistuje, zobrazí se emoji jako záloha.
 class ObleceniIkonka extends StatelessWidget {
   final PredmetObchodu predmet;
   final double size;
@@ -3353,49 +3837,101 @@ class ObleceniIkonka extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = predmet.vzacnost.barva;
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
+    final q = predmet.vzacnost.hvezdicky;
+    final isLeg = predmet.vzacnost == VzacnostTyp.legendarni;
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(size * .20),
+        border: Border.all(
+          color: c.withValues(
+            alpha: isLeg
+                ? .85
+                : q >= 3
+                ? .60
+                : .35,
+          ),
+          width: isLeg
+              ? 2.0
+              : q >= 3
+              ? 1.6
+              : 1.1,
+        ),
+        boxShadow: q >= 3
+            ? [
+                BoxShadow(
+                  color: c.withValues(alpha: isLeg ? .35 : .18),
+                  blurRadius: isLeg ? 10 : 6,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size * .20 - 1),
+        child: Image.asset(
+          'assets/obleceni/${predmet.id}.png',
           width: size,
           height: size,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [c.withValues(alpha: .22), c.withValues(alpha: .08)],
-            ),
-            borderRadius: BorderRadius.circular(size * .22),
-            border: Border.all(color: c.withValues(alpha: .5), width: 1.5),
-          ),
-          child: Center(
-            child: Text(
-              predmet.typ.emoji,
-              style: TextStyle(fontSize: size * .42),
-            ),
-          ),
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _Fallback(predmet: predmet, size: size),
         ),
-        // Miniaturní logo v dolním pravém rohu
-        Positioned(
-          right: -3,
-          bottom: -3,
-          child: Container(
-            width: size * .36,
-            height: size * .30,
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: _C.card,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: c.withValues(alpha: .35), width: .8),
-            ),
-            child: FittedBox(child: AppLogo(size: size * .22)),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
 
+// Záloha pokud obrázek neexistuje
+class _Fallback extends StatelessWidget {
+  final PredmetObchodu predmet;
+  final double size;
+  const _Fallback({required this.predmet, required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = predmet.vzacnost.barva;
+    final q = predmet.vzacnost.hvezdicky;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [c.withValues(alpha: .22), c.withValues(alpha: .07)],
+        ),
+      ),
+      child: Stack(
+        children: [
+          Center(
+            child: Text(
+              predmet.typ.emoji,
+              style: TextStyle(fontSize: size * .62),
+            ),
+          ),
+          if (q >= 2)
+            Positioned(
+              top: 3,
+              left: 4,
+              child: Text(
+                '✦' * (q - 1),
+                style: TextStyle(
+                  fontSize: size * .13,
+                  color: q == 4
+                      ? const Color(0xFFFFD700)
+                      : Colors.white.withValues(alpha: .8),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+// Hvězdičky vzácnosti
 // Hvězdičky vzácnosti
 class _VzacnostBadge extends StatelessWidget {
   final VzacnostTyp vzacnost;
@@ -3437,67 +3973,6 @@ class _VzacnostBadge extends StatelessWidget {
 }
 
 // Panel oblečených předmětů (pod postavou na Avataru)
-class _OblecenePanel extends StatelessWidget {
-  const _OblecenePanel();
-  @override
-  Widget build(BuildContext context) {
-    final oblecenePredmety = HerniData.oblecene.entries
-        .map(
-          (e) => _katalog.firstWhere(
-            (p) => p.id == e.value,
-            orElse: () => _katalog.first,
-          ),
-        )
-        .toList();
-    return Container(
-      margin: const EdgeInsets.fromLTRB(14, 10, 14, 0),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: _C.card,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _C.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'OBLEČENO',
-            style: TextStyle(
-              color: _C.textS,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              letterSpacing: .8,
-            ),
-          ),
-          const SizedBox(height: 8),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: oblecenePredmety
-                  .map(
-                    (p) => Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: Column(
-                        children: [
-                          ObleceniIkonka(predmet: p, size: 48),
-                          const SizedBox(height: 4),
-                          Text(
-                            p.nazev,
-                            style: const TextStyle(color: _C.text, fontSize: 9),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ═══════════════════ OBCHOD OBRAZOVKA ════════════════════
 class ObchodObrazovka extends StatefulWidget {
   final VoidCallback onObnoveni;
@@ -3508,13 +3983,45 @@ class ObchodObrazovka extends StatefulWidget {
 
 class _ObchodObrazovkaState extends State<ObchodObrazovka> {
   TypPredmetu? _filtr;
+  bool _zobrazCoiny = false;
+
+  // Balíčky coinů k zakoupení
+  static const List<Map<String, dynamic>> _balicky = [
+    {
+      'coiny': 100,
+      'kc': 20,
+      'bonus': '',
+      'asset': 'assets/ikony/coin_bronze.png',
+      'emoji': '🪙',
+    },
+    {
+      'coiny': 300,
+      'kc': 50,
+      'bonus': '+20 zdarma',
+      'asset': 'assets/ikony/coin_silver.png',
+      'emoji': '💰',
+    },
+    {
+      'coiny': 700,
+      'kc': 100,
+      'bonus': '+100 zdarma',
+      'asset': 'assets/ikony/coin_gold.png',
+      'emoji': '💎',
+    },
+    {
+      'coiny': 1500,
+      'kc': 200,
+      'bonus': '+300 zdarma',
+      'asset': 'assets/ikony/coin_diamond.png',
+      'emoji': '👑',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     final zobrazene = [
       ...(_filtr == null ? _katalog : _katalog.where((p) => p.typ == _filtr)),
     ];
-    // Seřadit: nejdříve nedostupné (nejdražší), pak dostupné
     zobrazene.sort((a, b) {
       final aVlastni = HerniData.vlastnene.contains(a.id);
       final bVlastni = HerniData.vlastnene.contains(b.id);
@@ -3538,7 +4045,7 @@ class _ObchodObrazovkaState extends State<ObchodObrazovka> {
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     fontStyle: FontStyle.italic,
-                    color: _C.text,
+                    color: _C.gold,
                   ),
                 ),
                 const Spacer(),
@@ -3569,27 +4076,439 @@ class _ObchodObrazovkaState extends State<ObchodObrazovka> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _filterChip(null, '🛍️  Vše'),
+                  // Dobít coiny chip
+                  GestureDetector(
+                    onTap: () => setState(() {
+                      _zobrazCoiny = true;
+                      _filtr = null;
+                    }),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _zobrazCoiny
+                            ? _C.gold.withValues(alpha: .15)
+                            : _C.card2,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: _zobrazCoiny ? _C.gold : _C.border,
+                          width: _zobrazCoiny ? 1.3 : 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/ikony/coiny.png',
+                            width: 16,
+                            height: 16,
+                            errorBuilder: (_, __, ___) => const Text(
+                              '💰',
+                              style: TextStyle(fontSize: 13),
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            'Dobít coiny',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: _zobrazCoiny ? _C.gold : _C.textS,
+                              fontWeight: _zobrazCoiny
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Vše chip
+                  GestureDetector(
+                    onTap: () => setState(() {
+                      _zobrazCoiny = false;
+                      _filtr = null;
+                    }),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: !_zobrazCoiny && _filtr == null
+                            ? _C.gold.withValues(alpha: .15)
+                            : _C.card2,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: !_zobrazCoiny && _filtr == null
+                              ? _C.gold
+                              : _C.border,
+                          width: !_zobrazCoiny && _filtr == null ? 1.3 : 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/ikony/vse.png',
+                            width: 16,
+                            height: 16,
+                            errorBuilder: (_, __, ___) => const Text(
+                              '🛍️',
+                              style: TextStyle(fontSize: 13),
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            'Vše',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: !_zobrazCoiny && _filtr == null
+                                  ? _C.gold
+                                  : _C.textS,
+                              fontWeight: !_zobrazCoiny && _filtr == null
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   ...TypPredmetu.values.map(
-                    (t) => _filterChip(t, '${t.emoji}  ${t.nazev}'),
+                    (t) => GestureDetector(
+                      onTap: () => setState(() {
+                        _zobrazCoiny = false;
+                        _filtr = t;
+                      }),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 180),
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: !_zobrazCoiny && _filtr == t
+                              ? _C.gold.withValues(alpha: .15)
+                              : _C.card2,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: !_zobrazCoiny && _filtr == t
+                                ? _C.gold
+                                : _C.border,
+                            width: !_zobrazCoiny && _filtr == t ? 1.3 : 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            t.ikonaWidget(size: 16),
+                            const SizedBox(width: 5),
+                            Text(
+                              t.nazev,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: !_zobrazCoiny && _filtr == t
+                                    ? _C.gold
+                                    : _C.textS,
+                                fontWeight: !_zobrazCoiny && _filtr == t
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
 
-          // Grid
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(14),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: .72,
+          // Obsah
+          if (_zobrazCoiny)
+            Expanded(child: _coinySekce())
+          else
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(14),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 1.45,
+                ),
+                itemCount: zobrazene.length,
+                itemBuilder: (ctx, i) => _itemKarta(zobrazene[i]),
               ),
-              itemCount: zobrazene.length,
-              itemBuilder: (ctx, i) => _itemKarta(zobrazene[i]),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _coinySekce() {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // Info banner
+        Container(
+          margin: const EdgeInsets.only(bottom: 18),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                _C.gold.withValues(alpha: .12),
+                _C.gold.withValues(alpha: .04),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: _C.gold.withValues(alpha: .35)),
+          ),
+          child: Row(
+            children: [
+              Image.asset(
+                'assets/ikony/zarovka.png',
+                width: 28,
+                height: 28,
+                errorBuilder: (_, __, ___) =>
+                    const Text('💡', style: TextStyle(fontSize: 22)),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Coiny získáš za tréninky zdarma,\nnebo si je můžeš rychle dobít přes QR platbu.',
+                  style: TextStyle(color: _C.textS, fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Balíčky
+        ...(_balicky.map((b) => _balikCard(b))),
+      ],
+    );
+  }
+
+  Widget _balikCard(Map<String, dynamic> b) {
+    final int coiny = b['coiny'];
+    final int kc = b['kc'];
+    final String bonus = b['bonus'];
+    final String asset = b['asset'];
+    final String emoji = b['emoji'];
+    final bool jeNejlepsi = kc == 100;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: jeNejlepsi ? _C.gold.withValues(alpha: .07) : _C.card,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: jeNejlepsi ? _C.gold : _C.border,
+          width: jeNejlepsi ? 1.5 : 1,
+        ),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => _otevriQR(coiny, kc),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              // Ikona — vlastní obrázek nebo emoji záloha
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: _C.gold.withValues(alpha: .10),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: _C.gold.withValues(alpha: .35)),
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    asset,
+                    width: 52,
+                    height: 52,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => Center(
+                      child: Text(emoji, style: const TextStyle(fontSize: 24)),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              // Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          '$coiny coinů',
+                          style: const TextStyle(
+                            color: _C.gold,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        if (bonus.isNotEmpty) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _C.green.withValues(alpha: .15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              bonus,
+                              style: const TextStyle(
+                                color: _C.green,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      '$kc Kč · platba QR kódem',
+                      style: const TextStyle(color: _C.textS, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              // Šipka
+              if (jeNejlepsi)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _C.gold.withValues(alpha: .15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'Nejlepší',
+                    style: TextStyle(
+                      color: _C.gold,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+              else
+                const Icon(Icons.chevron_right, color: _C.textS, size: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _otevriQR(int coiny, int kc) {
+    final vs = '${DateTime.now().millisecondsSinceEpoch % 9000000 + 1000000}';
+    final qrData =
+        'SPD*1.0*ACC:CZ6550510000001234567890*AM:${kc.toStringAsFixed(2)}*CC:CZK*MSG:Sport RPG Coiny*X-VS:$vs';
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _C.card,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          '$coiny coinů za $kc Kč',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.bold, color: _C.gold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Naskenuj QR ve své bance.',
+              style: TextStyle(color: _C.textS, fontSize: 13),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'VS: $vs',
+              style: const TextStyle(
+                color: _C.gold,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            // QR placeholder
+            Container(
+              width: 160,
+              height: 160,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: _C.gold.withValues(alpha: .4)),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.qr_code_2,
+                      size: 100,
+                      color: Colors.black87,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '$kc Kč',
+                      style: const TextStyle(
+                        color: Colors.black54,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            const Text(
+              'Po zaplacení klikni na Ověřit platbu.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: _C.textS, fontSize: 12),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Zrušit', style: TextStyle(color: _C.textS)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _C.gold,
+              foregroundColor: _C.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              _simulujOvereniCoin(coiny);
+            },
+            child: const Text(
+              'Ověřit platbu',
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -3597,30 +4516,23 @@ class _ObchodObrazovkaState extends State<ObchodObrazovka> {
     );
   }
 
-  Widget _filterChip(TypPredmetu? typ, String label) {
-    final sel = _filtr == typ;
-    return GestureDetector(
-      onTap: () => setState(() => _filtr = typ),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: sel ? _C.gold.withValues(alpha: .15) : _C.card2,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: sel ? _C.gold : _C.border,
-            width: sel ? 1.3 : 1,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: sel ? _C.gold : _C.textS,
-            fontWeight: sel ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
+  void _simulujOvereniCoin(int coiny) async {
+    // Zobraz loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) =>
+          const Center(child: CircularProgressIndicator(color: _C.gold)),
+    );
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+    Navigator.pop(context);
+    setState(() => HerniData.coiny += coiny);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('✅ Platba ověřena! +$coiny coinů připsáno.'),
+        backgroundColor: _C.green,
+        duration: const Duration(seconds: 3),
       ),
     );
   }
@@ -3632,10 +4544,10 @@ class _ObchodObrazovkaState extends State<ObchodObrazovka> {
     final c = p.vzacnost.barva;
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: jeObleceny ? c.withValues(alpha: .08) : _C.card,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: jeObleceny
               ? c
@@ -3646,32 +4558,28 @@ class _ObchodObrazovkaState extends State<ObchodObrazovka> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Ikonka
-          Center(child: ObleceniIkonka(predmet: p, size: 64)),
-          const SizedBox(height: 10),
-          // Vzácnost
-          _VzacnostBadge(p.vzacnost),
+          Center(child: ObleceniIkonka(predmet: p, size: 52)),
           const SizedBox(height: 6),
-          // Název
+          _VzacnostBadge(p.vzacnost),
+          const SizedBox(height: 4),
           Text(
             p.nazev,
             style: const TextStyle(
               color: _C.text,
               fontWeight: FontWeight.bold,
-              fontSize: 13,
+              fontSize: 12,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 2),
           Text(
             p.popis,
-            style: const TextStyle(color: _C.textS, fontSize: 10),
+            style: const TextStyle(color: _C.textS, fontSize: 9),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          const Spacer(),
-          // Cena + tlačítko
+          const SizedBox(height: 8),
           Row(
             children: [
               Text(
@@ -3679,13 +4587,13 @@ class _ObchodObrazovkaState extends State<ObchodObrazovka> {
                 style: const TextStyle(
                   color: _C.gold,
                   fontWeight: FontWeight.bold,
-                  fontSize: 15,
+                  fontSize: 13,
                 ),
               ),
               const SizedBox(width: 3),
               const Text(
                 'coinů',
-                style: TextStyle(color: _C.textS, fontSize: 10),
+                style: TextStyle(color: _C.textS, fontSize: 9),
               ),
               const Spacer(),
               _akceButton(p, vlastni, jeObleceny, muzeSiKoupit),
@@ -3861,13 +4769,13 @@ class _BatohObrazovkaState extends State<BatohObrazovka> {
         backgroundColor: _C.card,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: _C.text),
+          icon: const Icon(Icons.arrow_back, color: _C.gold),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'Batoh',
           style: TextStyle(
-            color: _C.text,
+            color: _C.gold,
             fontWeight: FontWeight.bold,
             fontStyle: FontStyle.italic,
           ),
@@ -4015,10 +4923,16 @@ class _BatohObrazovkaState extends State<BatohObrazovka> {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: _C.border),
                 ),
-                child: const Center(
+                child: Center(
                   child: Column(
                     children: [
-                      Text('🎒', style: TextStyle(fontSize: 36)),
+                      Image.asset(
+                        'assets/batoh.png',
+                        width: 52,
+                        height: 52,
+                        errorBuilder: (_, __, ___) =>
+                            const Text('🎒', style: TextStyle(fontSize: 36)),
+                      ),
                       SizedBox(height: 8),
                       Text(
                         'Batoh je prázdný',
