@@ -216,7 +216,167 @@ class _WavePainter extends CustomPainter {
   bool shouldRepaint(_) => false;
 }
 
-// ════════════════════════════ APP ═══════════════════════
+// ═══════════════════ OBCHOD — DATA MODEL ════════════════
+
+enum VzacnostTyp {
+  zakladni('Základní', Color(0xFF8A8A8A), 1),
+  vzacne('Vzácné', Color(0xFF4A90D9), 2),
+  epicke('Epické', Color(0xFF9B4DC4), 3),
+  legendarni('Legendární', Color(0xFFC4974A), 4);
+
+  final String nazev;
+  final Color barva;
+  final int hvezdicky;
+  const VzacnostTyp(this.nazev, this.barva, this.hvezdicky);
+}
+
+enum TypPredmetu {
+  triko('Triko', '👕'),
+  kalhoty('Kalhoty', '👖'),
+  boty('Boty', '👟'),
+  cepice('Čepice', '🧢'),
+  rukavice('Rukavice', '🥊');
+
+  final String nazev;
+  final String emoji;
+  const TypPredmetu(this.nazev, this.emoji);
+}
+
+class PredmetObchodu {
+  final String id, nazev, popis;
+  final TypPredmetu typ;
+  final VzacnostTyp vzacnost;
+  final int cena;
+  const PredmetObchodu({
+    required this.id,
+    required this.nazev,
+    required this.popis,
+    required this.typ,
+    required this.vzacnost,
+    required this.cena,
+  });
+}
+
+const List<PredmetObchodu> _katalog = [
+  // ── TRIKO ───────────────────────────────────────────────
+  PredmetObchodu(
+    id: 't1',
+    nazev: 'Triko Base',
+    popis: 'Základní dres se sportovním logem.',
+    typ: TypPredmetu.triko,
+    vzacnost: VzacnostTyp.zakladni,
+    cena: 50,
+  ),
+  PredmetObchodu(
+    id: 't2',
+    nazev: 'Triko Sport',
+    popis: 'Funkční závodní dres s logem.',
+    typ: TypPredmetu.triko,
+    vzacnost: VzacnostTyp.vzacne,
+    cena: 150,
+  ),
+  PredmetObchodu(
+    id: 't3',
+    nazev: 'Triko Elite',
+    popis: 'Prémiové závodní triko Elite Series.',
+    typ: TypPredmetu.triko,
+    vzacnost: VzacnostTyp.epicke,
+    cena: 380,
+  ),
+  PredmetObchodu(
+    id: 't4',
+    nazev: 'Triko Legend',
+    popis: 'Legendární edice — pouze pro elitu.',
+    typ: TypPredmetu.triko,
+    vzacnost: VzacnostTyp.legendarni,
+    cena: 900,
+  ),
+  // ── KALHOTY ─────────────────────────────────────────────
+  PredmetObchodu(
+    id: 'k1',
+    nazev: 'Kraťasy Base',
+    popis: 'Lehké sportovní kraťasy.',
+    typ: TypPredmetu.kalhoty,
+    vzacnost: VzacnostTyp.zakladni,
+    cena: 80,
+  ),
+  PredmetObchodu(
+    id: 'k2',
+    nazev: 'Kraťasy Sport',
+    popis: 'Technické závodní kraťasy.',
+    typ: TypPredmetu.kalhoty,
+    vzacnost: VzacnostTyp.vzacne,
+    cena: 200,
+  ),
+  PredmetObchodu(
+    id: 'k3',
+    nazev: 'Tepláky Elite',
+    popis: 'Prémiové tepláky Elite Series.',
+    typ: TypPredmetu.kalhoty,
+    vzacnost: VzacnostTyp.epicke,
+    cena: 450,
+  ),
+  // ── BOTY ────────────────────────────────────────────────
+  PredmetObchodu(
+    id: 'b1',
+    nazev: 'Boty Base',
+    popis: 'Základní tréninková obuv.',
+    typ: TypPredmetu.boty,
+    vzacnost: VzacnostTyp.zakladni,
+    cena: 60,
+  ),
+  PredmetObchodu(
+    id: 'b2',
+    nazev: 'Boty Sport',
+    popis: 'Výkonnostní závodní boty.',
+    typ: TypPredmetu.boty,
+    vzacnost: VzacnostTyp.vzacne,
+    cena: 180,
+  ),
+  PredmetObchodu(
+    id: 'b3',
+    nazev: 'Boty Legend',
+    popis: 'Limitovaná edice Legend.',
+    typ: TypPredmetu.boty,
+    vzacnost: VzacnostTyp.legendarni,
+    cena: 700,
+  ),
+  // ── ČEPICE ──────────────────────────────────────────────
+  PredmetObchodu(
+    id: 'c1',
+    nazev: 'Kšiltovka Base',
+    popis: 'Klasická kšiltovka s logem.',
+    typ: TypPredmetu.cepice,
+    vzacnost: VzacnostTyp.zakladni,
+    cena: 70,
+  ),
+  PredmetObchodu(
+    id: 'c2',
+    nazev: 'Čepice Elite',
+    popis: 'Prémiová sportovní čepice.',
+    typ: TypPredmetu.cepice,
+    vzacnost: VzacnostTyp.vzacne,
+    cena: 160,
+  ),
+  // ── RUKAVICE ────────────────────────────────────────────
+  PredmetObchodu(
+    id: 'r1',
+    nazev: 'Rukavice Sport',
+    popis: 'Tréninkové rukavice se vzorem.',
+    typ: TypPredmetu.rukavice,
+    vzacnost: VzacnostTyp.vzacne,
+    cena: 130,
+  ),
+  PredmetObchodu(
+    id: 'r2',
+    nazev: 'Rukavice Elite',
+    popis: 'Prémiové závodní rukavice.',
+    typ: TypPredmetu.rukavice,
+    vzacnost: VzacnostTyp.epicke,
+    cena: 320,
+  ),
+];
+
 class PremiumSportRPG extends StatelessWidget {
   const PremiumSportRPG({super.key});
   @override
@@ -227,8 +387,226 @@ class PremiumSportRPG extends StatelessWidget {
       scaffoldBackgroundColor: _C.bg,
       colorScheme: const ColorScheme.light(primary: _C.gold, surface: _C.card),
     ),
-    home: const MobilniRam(child: HlavniNavigace()),
+    home: const MobilniRam(child: SplashObrazovka()),
   );
+}
+
+// ═══════════════════ SPLASH SCREEN ══════════════════════
+class SplashObrazovka extends StatefulWidget {
+  const SplashObrazovka({super.key});
+  @override
+  State<SplashObrazovka> createState() => _SplashObrazovkaState();
+}
+
+class _SplashObrazovkaState extends State<SplashObrazovka>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _logoScale;
+  late Animation<double> _logoOpacity;
+  late Animation<double> _glowOpacity;
+  late Animation<double> _nazevOpacity;
+  late Animation<double> _sloganOpacity;
+  late Animation<double> _nazevY;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2800),
+    );
+
+    _glowOpacity = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _ctrl,
+        curve: const Interval(0.0, 0.50, curve: Curves.easeOut),
+      ),
+    );
+
+    _logoOpacity = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _ctrl,
+        curve: const Interval(0.05, 0.40, curve: Curves.easeOut),
+      ),
+    );
+
+    _logoScale = Tween<double>(begin: 0.45, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _ctrl,
+        curve: const Interval(0.05, 0.50, curve: Curves.elasticOut),
+      ),
+    );
+
+    _nazevOpacity = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _ctrl,
+        curve: const Interval(0.42, 0.62, curve: Curves.easeOut),
+      ),
+    );
+
+    _nazevY = Tween<double>(begin: 14, end: 0).animate(
+      CurvedAnimation(
+        parent: _ctrl,
+        curve: const Interval(0.42, 0.65, curve: Curves.easeOut),
+      ),
+    );
+
+    _sloganOpacity = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _ctrl,
+        curve: const Interval(0.62, 0.80, curve: Curves.easeOut),
+      ),
+    );
+
+    _ctrl.forward();
+
+    // Přechod do hlavní aplikace
+    Future.delayed(const Duration(milliseconds: 3200), () {
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (ctx, a, b) => const HlavniNavigace(),
+          transitionDuration: const Duration(milliseconds: 700),
+          transitionsBuilder: (ctx, anim, _, child) =>
+              FadeTransition(opacity: anim, child: child),
+        ),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF110E08),
+      body: AnimatedBuilder(
+        animation: _ctrl,
+        builder: (ctx, _) => Stack(
+          children: [
+            // Tmavý teplý gradient pozadí
+            Container(
+              decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment(0, -.15),
+                  radius: 1.0,
+                  colors: [Color(0xFF2A1E0A), Color(0xFF0E0A05)],
+                ),
+              ),
+            ),
+
+            // Zlatý glow za logem
+            Center(
+              child: Opacity(
+                opacity: _glowOpacity.value,
+                child: Container(
+                  width: 220,
+                  height: 220,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFC4974A).withValues(alpha: .28),
+                        blurRadius: 90,
+                        spreadRadius: 40,
+                      ),
+                      BoxShadow(
+                        color: const Color(0xFFFFD080).withValues(alpha: .12),
+                        blurRadius: 140,
+                        spreadRadius: 60,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Střed: logo + název + slogan
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Logo
+                  Opacity(
+                    opacity: _logoOpacity.value,
+                    child: Transform.scale(
+                      scale: _logoScale.value,
+                      child: Image.asset(
+                        'assets/logo.png',
+                        width: 110,
+                        height: 90,
+                        fit: BoxFit.contain,
+                        errorBuilder: (c, e, s) => const AppLogo(size: 90),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // Název aplikace
+                  Opacity(
+                    opacity: _nazevOpacity.value,
+                    child: Transform.translate(
+                      offset: Offset(0, _nazevY.value),
+                      child: const Text(
+                        'Sport RPG',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          color: Color(0xFFF0E4CC),
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Slogan
+                  Opacity(
+                    opacity: _sloganOpacity.value,
+                    child: const Text(
+                      'Cvič. Pomáhej. Sbírej.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFFC4974A),
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 2.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Spodní verze / branding
+            Positioned(
+              bottom: 28,
+              left: 0,
+              right: 0,
+              child: Opacity(
+                opacity: _sloganOpacity.value,
+                child: const Text(
+                  'v1.0',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xFF5A4A2A),
+                    fontSize: 11,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 // ═══════════════════ MOBILNÍ RÁM ═══════════════════════
@@ -306,6 +684,10 @@ class HerniData {
   static String posledniSportJmeno = 'Běh venku';
   static String posledniSportInfo = '5,20 km • 28:12 min';
 
+  // Obchod & Batoh
+  static Set<String> vlastnene = {}; // ID vlastněných předmětů
+  static Map<String, String> oblecene = {}; // TypPredmetu.nazev → predmet.id
+
   static Map<String, int> svalyLvl = {
     'Triceps': 1,
     'Přímý sval břišní': 1,
@@ -355,28 +737,30 @@ class HerniData {
     ),
   ];
 
-  // Parsování km z textového pole výkonu
+  // Parsování km — přijímá číslo ("5", "5.2") i text ("5 km")
   static double parseKm(String? text) {
     if (text == null || text.isEmpty) return 0;
-    final m = RegExp(
-      r'(\d+[.,]?\d*)\s*km',
-      caseSensitive: false,
-    ).firstMatch(text);
-    return m != null
-        ? double.tryParse(m.group(1)!.replaceAll(',', '.')) ?? 0
-        : 0;
+    final clean = text.replaceAll(',', '.').trim();
+    final direct = double.tryParse(clean);
+    if (direct != null) return direct;
+    final m = RegExp(r'(\d+\.?\d*)').firstMatch(clean);
+    return m != null ? double.tryParse(m.group(1)!) ?? 0 : 0;
   }
 
-  // Parsování minut z textového pole času
+  // Parsování minut — přijímá číslo ("45") i text ("45 min", "1:15")
   static int parseMinuty(String? text) {
     if (text == null || text.isEmpty) return 0;
-    final m1 = RegExp(r'(\d+)\s*min', caseSensitive: false).firstMatch(text);
-    if (m1 != null) return int.tryParse(m1.group(1)!) ?? 0;
-    final m2 = RegExp(r'(\d+)[:\s](\d+)').firstMatch(text);
+    final clean = text.trim();
+    final direct = int.tryParse(clean);
+    if (direct != null) return direct;
+    final asDouble = double.tryParse(clean.replaceAll(',', '.'));
+    if (asDouble != null) return asDouble.round();
+    final m2 = RegExp(r'(\d+)[:\s](\d+)').firstMatch(clean);
     if (m2 != null)
       return (int.tryParse(m2.group(1)!) ?? 0) * 60 +
           (int.tryParse(m2.group(2)!) ?? 0);
-    return 0;
+    final m1 = RegExp(r'(\d+)').firstMatch(clean);
+    return m1 != null ? int.tryParse(m1.group(1)!) ?? 0 : 0;
   }
 }
 
@@ -485,6 +869,7 @@ class _HlavniNavigaceState extends State<HlavniNavigace> {
       PomahejObrazovka(onObnoveni: _obnovit),
       const MojeCviceniObrazovka(),
       const StatistikyObrazovka(),
+      ObchodObrazovka(onObnoveni: _obnovit),
     ];
     return Scaffold(
       backgroundColor: _C.bg,
@@ -542,6 +927,13 @@ class _HlavniNavigaceState extends State<HlavniNavigace> {
                     label: 'Statistiky',
                     selected: _idx == 3,
                     onTap: () => setState(() => _idx = 3),
+                  ),
+                  _NavItem(
+                    icon: Icons.store_outlined,
+                    activeIcon: Icons.store,
+                    label: 'Obchod',
+                    selected: _idx == 4,
+                    onTap: () => setState(() => _idx = 4),
                   ),
                 ],
               ),
@@ -612,50 +1004,84 @@ class StatistikyObrazovka extends StatelessWidget {
 }
 
 // ── Přehled Tab ──────────────────────────────────────────
-class _PrehledTab extends StatelessWidget {
+class _PrehledTab extends StatefulWidget {
   const _PrehledTab();
+  @override
+  State<_PrehledTab> createState() => _PrehledTabState();
+}
+
+class _PrehledTabState extends State<_PrehledTab> {
+  int _vybrano = 0; // 0=Kardio, 1=Síla, 2=Mobilita
 
   @override
   Widget build(BuildContext context) {
     final splnene = HerniData.vsechnyTreninky
         .where((t) => t.jeSplneno)
         .toList();
-
-    // Počítání km a minut ze splněných tréninků
-    double kmTotal = HerniData.kmZTreninku;
-    int minTotal = HerniData.minutZTreninku;
-    for (final t in splnene) {
-      kmTotal += HerniData.parseKm(t.vykon);
-      minTotal += HerniData.parseMinuty(t.cas);
-    }
-
-    // Breakdown podle typu
     final kardio = splnene.where((t) => t.typ == 'kardio').toList();
     final sila = splnene.where((t) => t.typ == 'sila').toList();
     final mobilita = splnene.where((t) => t.typ == 'mobilita').toList();
 
+    // ── KM pouze z kardio vykon ────────────────────────
     double kmKardio = 0;
     for (final t in kardio) kmKardio += HerniData.parseKm(t.vykon);
+
+    // ── Minuty pouze z cas pole (ne z vykon) ───────────
     int minSila = 0;
     for (final t in sila) minSila += HerniData.parseMinuty(t.cas);
     int minMob = 0;
     for (final t in mobilita) minMob += HerniData.parseMinuty(t.cas);
+    int minKardio = 0;
+    for (final t in kardio) minKardio += HerniData.parseMinuty(t.cas);
+
+    // Aktivní sekce
+    final List<Map<String, dynamic>> sekce = [
+      {
+        'label': '🏃  Kardio',
+        'barva': const Color(0xFF5B8DD9),
+        'ikona': Icons.directions_run_outlined,
+        'count': kardio.length,
+        'hlavniLabel': 'Uběhnuto / ujeto',
+        'hlavniHodnota': kmKardio.toStringAsFixed(2),
+        'hlavniJednotka': 'km',
+        'vedlejsiLabel': 'Čas kardio',
+        'vedlejsiHodnota': '$minKardio',
+        'vedlejsiJednotka': 'min',
+      },
+      {
+        'label': '💪  Síla',
+        'barva': const Color(0xFFC4974A),
+        'ikona': Icons.fitness_center_outlined,
+        'count': sila.length,
+        'hlavniLabel': 'Odcvičeno',
+        'hlavniHodnota': '$minSila',
+        'hlavniJednotka': 'min',
+        'vedlejsiLabel': 'Tréninky',
+        'vedlejsiHodnota': '${sila.length}',
+        'vedlejsiJednotka': 'celkem',
+      },
+      {
+        'label': '🧘  Mobilita',
+        'barva': const Color(0xFF5BD9A4),
+        'ikona': Icons.self_improvement_outlined,
+        'count': mobilita.length,
+        'hlavniLabel': 'Odcvičeno',
+        'hlavniHodnota': '$minMob',
+        'hlavniJednotka': 'min',
+        'vedlejsiLabel': 'Tréninky',
+        'vedlejsiHodnota': '${mobilita.length}',
+        'vedlejsiJednotka': 'celkem',
+      },
+    ];
+    final s = sekce[_vybrano];
+    final Color barva = s['barva'] as Color;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'SOUHRN',
-            style: TextStyle(
-              color: _C.gold,
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
-            ),
-          ),
-          const SizedBox(height: 10),
+          // ── Celkový souhrn (vždy viditelný) ─────────────
           Row(
             children: [
               Expanded(
@@ -670,69 +1096,171 @@ class _PrehledTab extends StatelessWidget {
               Expanded(
                 child: _MiniStatKarta(
                   ikona: Icons.check_circle_outline,
-                  label: 'Tréninky',
+                  label: 'Celkem tréninků',
                   value: '${splnene.length}',
                   unit: 'splněno',
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: _MiniStatKarta(
-                  ikona: Icons.directions_run_outlined,
-                  label: 'Kilometry',
-                  value: kmTotal.toStringAsFixed(1),
-                  unit: 'km',
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _MiniStatKarta(
-                  ikona: Icons.timer_outlined,
-                  label: 'Minuty',
-                  value: '$minTotal',
-                  unit: 'min',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
+
+          // ── Přepínač typu ────────────────────────────────
           const Text(
-            'TYPY TRÉNINKŮ',
+            'ZOBRAZIT STATISTIKU',
             style: TextStyle(
-              color: _C.gold,
-              fontSize: 11,
+              color: _C.textS,
+              fontSize: 10,
               fontWeight: FontWeight.bold,
               letterSpacing: 1,
             ),
           ),
-          const SizedBox(height: 10),
-          _TypKarta(
-            ikona: Icons.directions_run,
-            label: 'Kardio 🏃',
-            barva: const Color(0xFF5B8DD9),
-            radky: [
-              '${kardio.length} tréninků',
-              '${kmKardio.toStringAsFixed(1)} km',
-            ],
-          ),
           const SizedBox(height: 8),
-          _TypKarta(
-            ikona: Icons.fitness_center,
-            label: 'Síla 💪',
-            barva: const Color(0xFFC4974A),
-            radky: ['${sila.length} tréninků', '$minSila minut'],
+          Container(
+            decoration: BoxDecoration(
+              color: _C.card2,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            padding: const EdgeInsets.all(4),
+            child: Row(
+              children: List.generate(sekce.length, (i) {
+                final bool akt = _vybrano == i;
+                final Color bv = sekce[i]['barva'] as Color;
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => _vybrano = i),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(vertical: 9),
+                      decoration: akt
+                          ? BoxDecoration(
+                              color: bv.withValues(alpha: .15),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: bv.withValues(alpha: .4),
+                                width: 1.2,
+                              ),
+                            )
+                          : null,
+                      child: Text(
+                        sekce[i]['label'] as String,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: akt ? FontWeight.bold : FontWeight.normal,
+                          color: akt ? bv : _C.textS,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
           ),
-          const SizedBox(height: 8),
-          _TypKarta(
-            ikona: Icons.self_improvement,
-            label: 'Mobilita 🧘',
-            barva: const Color(0xFF5BD9A4),
-            radky: ['${mobilita.length} tréninků', '$minMob minut'],
+          const SizedBox(height: 16),
+
+          // ── Hlavní karta vybrané sekce ───────────────────
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: barva.withValues(alpha: .07),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: barva.withValues(alpha: .3),
+                width: 1.2,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: barva.withValues(alpha: .15),
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                      child: Icon(
+                        s['ikona'] as IconData,
+                        color: barva,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      s['label'] as String,
+                      style: TextStyle(
+                        color: barva,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${s['count']} tréninků',
+                      style: const TextStyle(color: _C.textS, fontSize: 12),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                // Hlavní číslo
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      s['hlavniHodnota'] as String,
+                      style: TextStyle(
+                        color: barva,
+                        fontSize: 42,
+                        fontWeight: FontWeight.bold,
+                        height: 1.0,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Text(
+                        s['hlavniJednotka'] as String,
+                        style: TextStyle(
+                          color: barva.withValues(alpha: .7),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  s['hlavniLabel'] as String,
+                  style: const TextStyle(color: _C.textS, fontSize: 12),
+                ),
+                const SizedBox(height: 14),
+                Container(height: 1, color: barva.withValues(alpha: .15)),
+                const SizedBox(height: 12),
+                // Vedlejší číslo
+                Row(
+                  children: [
+                    Text(
+                      s['vedlejsiHodnota'] as String,
+                      style: const TextStyle(
+                        color: _C.text,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${s['vedlejsiJednotka']}  ·  ${s['vedlejsiLabel']}',
+                      style: const TextStyle(color: _C.textS, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
+
           const SizedBox(height: 20),
         ],
       ),
@@ -945,11 +1473,14 @@ class _LeaderboardList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Vložit aktuálního uživatele a seřadit
+    // Vložit aktuálního uživatele a seřadit — km pouze z kardio
+    final kmCviceni = HerniData.vsechnyTreninky
+        .where((t) => t.jeSplneno && t.typ == 'kardio')
+        .fold(0.0, (sum, t) => sum + HerniData.parseKm(t.vykon));
     final aktualniHrac = _Hrac(
       HerniData.jmeno,
       HerniData.coiny,
-      HerniData.kmZTreninku + HerniData.kilometry,
+      kmCviceni + HerniData.kilometry,
       HerniData.vsechnyTreninky.where((t) => t.jeSplneno).length,
       _C.gold,
     );
@@ -1197,9 +1728,15 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                   ),
                 ),
                 const SizedBox(height: 14),
-                _inputField(casCtrl, 'Čas tréninku (např. 45 min)'),
+                _numField(casCtrl, 'Čas tréninku', 'min'),
                 const SizedBox(height: 12),
-                _inputField(vykonCtrl, 'Výkon (např. 5 km nebo 4 série)'),
+                if (trening.typ == 'kardio')
+                  _numField(vykonCtrl, 'Vzdálenost', 'km')
+                else
+                  _inputField(
+                    vykonCtrl,
+                    'Výkon (série, opakování, poznámka...)',
+                  ),
                 const SizedBox(height: 12),
                 _inputField(poznamkaCtrl, 'Poznámka...', maxLines: 2),
                 const SizedBox(height: 12),
@@ -1288,11 +1825,6 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
                   trening.cestaKFotce = nahranaFotka;
                   // +2 coiny za splnění
                   HerniData.coiny += 2;
-                  // Sledování km a minut
-                  HerniData.kmZTreninku += HerniData.parseKm(vykonCtrl.text);
-                  HerniData.minutZTreninku += HerniData.parseMinuty(
-                    casCtrl.text,
-                  );
                 });
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -1336,6 +1868,37 @@ class _MojeCviceniObrazovkaState extends State<MojeCviceniObrazovka> {
       fillColor: _C.card2,
     ),
   );
+
+  Widget _numField(TextEditingController ctrl, String label, String unit) =>
+      TextField(
+        controller: ctrl,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        style: const TextStyle(
+          color: _C.text,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: _C.textS, fontSize: 12),
+          suffixText: unit,
+          suffixStyle: const TextStyle(
+            color: _C.gold,
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: _C.border),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: _C.gold, width: 1.5),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          filled: true,
+          fillColor: _C.card2,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -1913,6 +2476,56 @@ class _HlavniObrazovkaAvatarState extends State<HlavniObrazovkaAvatar> {
               aktivniSval: _aktivniSval,
             ),
 
+            // ── OBLEČENÉ PŘEDMĚTY VEDLE POSTAVY ─────────────────
+            if (HerniData.oblecene.isNotEmpty) _OblecenePanel(),
+
+            // ── BATOH TLAČÍTKO ───────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
+              child: GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const BatohObrazovka()),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _C.card,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: _C.border),
+                  ),
+                  child: Row(
+                    children: [
+                      const Text('🎒', style: TextStyle(fontSize: 18)),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'Batoh',
+                        style: TextStyle(
+                          color: _C.text,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        '${HerniData.vlastnene.length} předmětů',
+                        style: const TextStyle(color: _C.textS, fontSize: 12),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: _C.textS,
+                        size: 18,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
             // ── TRÉNINKOVÉ CENTRUM ───────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -2055,39 +2668,6 @@ class _PostavaSeLabely extends StatelessWidget {
           },
         ),
       ),
-    );
-  }
-
-  Widget _lbl(double offset, double top, String text, {required bool left}) {
-    final pill = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-      decoration: BoxDecoration(
-        color: _C.white.withValues(alpha: .88),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _C.border.withValues(alpha: .8), width: .8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .07),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: _C.text,
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
-          height: 1.3,
-        ),
-      ),
-    );
-    return Positioned(
-      top: top,
-      left: left ? offset : null,
-      right: !left ? offset : null,
-      child: pill,
     );
   }
 }
@@ -2757,6 +3337,768 @@ class _PomahejObrazovkaState extends State<PomahejObrazovka> {
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════ OBLEČENÍ IKONKA ═════════════════════
+class ObleceniIkonka extends StatelessWidget {
+  final PredmetObchodu predmet;
+  final double size;
+  const ObleceniIkonka({super.key, required this.predmet, this.size = 58});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = predmet.vzacnost.barva;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [c.withValues(alpha: .22), c.withValues(alpha: .08)],
+            ),
+            borderRadius: BorderRadius.circular(size * .22),
+            border: Border.all(color: c.withValues(alpha: .5), width: 1.5),
+          ),
+          child: Center(
+            child: Text(
+              predmet.typ.emoji,
+              style: TextStyle(fontSize: size * .42),
+            ),
+          ),
+        ),
+        // Miniaturní logo v dolním pravém rohu
+        Positioned(
+          right: -3,
+          bottom: -3,
+          child: Container(
+            width: size * .36,
+            height: size * .30,
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: _C.card,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: c.withValues(alpha: .35), width: .8),
+            ),
+            child: FittedBox(child: AppLogo(size: size * .22)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Hvězdičky vzácnosti
+class _VzacnostBadge extends StatelessWidget {
+  final VzacnostTyp vzacnost;
+  const _VzacnostBadge(this.vzacnost);
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+    decoration: BoxDecoration(
+      color: vzacnost.barva.withValues(alpha: .13),
+      borderRadius: BorderRadius.circular(6),
+      border: Border.all(
+        color: vzacnost.barva.withValues(alpha: .4),
+        width: .8,
+      ),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '★' * vzacnost.hvezdicky,
+          style: TextStyle(
+            color: vzacnost.barva,
+            fontSize: 9,
+            letterSpacing: 1,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          vzacnost.nazev,
+          style: TextStyle(
+            color: vzacnost.barva,
+            fontSize: 9,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+// Panel oblečených předmětů (pod postavou na Avataru)
+class _OblecenePanel extends StatelessWidget {
+  const _OblecenePanel();
+  @override
+  Widget build(BuildContext context) {
+    final oblecenePredmety = HerniData.oblecene.entries
+        .map(
+          (e) => _katalog.firstWhere(
+            (p) => p.id == e.value,
+            orElse: () => _katalog.first,
+          ),
+        )
+        .toList();
+    return Container(
+      margin: const EdgeInsets.fromLTRB(14, 10, 14, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: _C.card,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: _C.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'OBLEČENO',
+            style: TextStyle(
+              color: _C.textS,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              letterSpacing: .8,
+            ),
+          ),
+          const SizedBox(height: 8),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: oblecenePredmety
+                  .map(
+                    (p) => Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Column(
+                        children: [
+                          ObleceniIkonka(predmet: p, size: 48),
+                          const SizedBox(height: 4),
+                          Text(
+                            p.nazev,
+                            style: const TextStyle(color: _C.text, fontSize: 9),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════ OBCHOD OBRAZOVKA ════════════════════
+class ObchodObrazovka extends StatefulWidget {
+  final VoidCallback onObnoveni;
+  const ObchodObrazovka({super.key, required this.onObnoveni});
+  @override
+  State<ObchodObrazovka> createState() => _ObchodObrazovkaState();
+}
+
+class _ObchodObrazovkaState extends State<ObchodObrazovka> {
+  TypPredmetu? _filtr;
+
+  @override
+  Widget build(BuildContext context) {
+    final zobrazene = [
+      ...(_filtr == null ? _katalog : _katalog.where((p) => p.typ == _filtr)),
+    ];
+    // Seřadit: nejdříve nedostupné (nejdražší), pak dostupné
+    zobrazene.sort((a, b) {
+      final aVlastni = HerniData.vlastnene.contains(a.id);
+      final bVlastni = HerniData.vlastnene.contains(b.id);
+      if (aVlastni && !bVlastni) return 1;
+      if (!aVlastni && bVlastni) return -1;
+      return a.cena.compareTo(b.cena);
+    });
+
+    return SafeArea(
+      child: Column(
+        children: [
+          // Header
+          Container(
+            color: _C.card,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+            child: Row(
+              children: [
+                const Text(
+                  'Obchod',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    color: _C.text,
+                  ),
+                ),
+                const Spacer(),
+                _HexBadge(value: HerniData.coiny),
+              ],
+            ),
+          ),
+          Container(
+            height: 1.5,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  _C.gold.withValues(alpha: .5),
+                  _C.gold.withValues(alpha: .5),
+                  Colors.transparent,
+                ],
+                stops: const [0.0, 0.25, 0.75, 1.0],
+              ),
+            ),
+          ),
+
+          // Filter chips
+          Container(
+            color: _C.card,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _filterChip(null, '🛍️  Vše'),
+                  ...TypPredmetu.values.map(
+                    (t) => _filterChip(t, '${t.emoji}  ${t.nazev}'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Grid
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(14),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: .72,
+              ),
+              itemCount: zobrazene.length,
+              itemBuilder: (ctx, i) => _itemKarta(zobrazene[i]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _filterChip(TypPredmetu? typ, String label) {
+    final sel = _filtr == typ;
+    return GestureDetector(
+      onTap: () => setState(() => _filtr = typ),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: sel ? _C.gold.withValues(alpha: .15) : _C.card2,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: sel ? _C.gold : _C.border,
+            width: sel ? 1.3 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: sel ? _C.gold : _C.textS,
+            fontWeight: sel ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _itemKarta(PredmetObchodu p) {
+    final vlastni = HerniData.vlastnene.contains(p.id);
+    final jeObleceny = HerniData.oblecene[p.typ.nazev] == p.id;
+    final muzeSiKoupit = HerniData.coiny >= p.cena && !vlastni;
+    final c = p.vzacnost.barva;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: jeObleceny ? c.withValues(alpha: .08) : _C.card,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: jeObleceny
+              ? c
+              : (vlastni ? c.withValues(alpha: .4) : _C.border),
+          width: jeObleceny ? 1.5 : 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Ikonka
+          Center(child: ObleceniIkonka(predmet: p, size: 64)),
+          const SizedBox(height: 10),
+          // Vzácnost
+          _VzacnostBadge(p.vzacnost),
+          const SizedBox(height: 6),
+          // Název
+          Text(
+            p.nazev,
+            style: const TextStyle(
+              color: _C.text,
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 3),
+          Text(
+            p.popis,
+            style: const TextStyle(color: _C.textS, fontSize: 10),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const Spacer(),
+          // Cena + tlačítko
+          Row(
+            children: [
+              Text(
+                '${p.cena}',
+                style: const TextStyle(
+                  color: _C.gold,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+              const SizedBox(width: 3),
+              const Text(
+                'coinů',
+                style: TextStyle(color: _C.textS, fontSize: 10),
+              ),
+              const Spacer(),
+              _akceButton(p, vlastni, jeObleceny, muzeSiKoupit),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _akceButton(
+    PredmetObchodu p,
+    bool vlastni,
+    bool jeObleceny,
+    bool muze,
+  ) {
+    if (!vlastni) {
+      return GestureDetector(
+        onTap: muze ? () => _koupit(p) : null,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: muze ? _C.gold : _C.card2,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            'Koupit',
+            style: TextStyle(
+              color: muze ? _C.white : _C.textS,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+    if (jeObleceny) {
+      return GestureDetector(
+        onTap: () => setState(() => HerniData.oblecene.remove(p.typ.nazev)),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+          decoration: BoxDecoration(
+            color: p.vzacnost.barva.withValues(alpha: .15),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            'Svléct',
+            style: TextStyle(
+              color: p.vzacnost.barva,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+    return GestureDetector(
+      onTap: () => setState(() => HerniData.oblecene[p.typ.nazev] = p.id),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        decoration: BoxDecoration(
+          color: _C.gold.withValues(alpha: .12),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: _C.gold.withValues(alpha: .4)),
+        ),
+        child: const Text(
+          'Obléct',
+          style: TextStyle(
+            color: _C.gold,
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _koupit(PredmetObchodu p) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _C.card,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Koupit ${p.nazev}?',
+          style: const TextStyle(color: _C.text, fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ObleceniIkonka(predmet: p, size: 72),
+            const SizedBox(height: 12),
+            _VzacnostBadge(p.vzacnost),
+            const SizedBox(height: 8),
+            Text(
+              p.popis,
+              style: const TextStyle(color: _C.textS, fontSize: 13),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Cena: ', style: TextStyle(color: _C.textS)),
+                Text(
+                  '${p.cena} coinů',
+                  style: const TextStyle(
+                    color: _C.gold,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Zrušit', style: TextStyle(color: _C.textS)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _C.gold,
+              foregroundColor: _C.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () {
+              setState(() {
+                HerniData.coiny -= p.cena;
+                HerniData.vlastnene.add(p.id);
+              });
+              widget.onObnoveni();
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${p.nazev} přidáno do batohu! 🎉'),
+                  backgroundColor: _C.green,
+                ),
+              );
+            },
+            child: const Text(
+              'Koupit',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════ BATOH OBRAZOVKA ═════════════════════
+class BatohObrazovka extends StatefulWidget {
+  const BatohObrazovka({super.key});
+  @override
+  State<BatohObrazovka> createState() => _BatohObrazovkaState();
+}
+
+class _BatohObrazovkaState extends State<BatohObrazovka> {
+  @override
+  Widget build(BuildContext context) {
+    final vsechny = TypPredmetu.values;
+    final vlastneneList = _katalog
+        .where((p) => HerniData.vlastnene.contains(p.id))
+        .toList();
+
+    return Scaffold(
+      backgroundColor: _C.bg,
+      appBar: AppBar(
+        backgroundColor: _C.card,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: _C.text),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Batoh',
+          style: TextStyle(
+            color: _C.text,
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.5),
+          child: Container(
+            height: 1.5,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  _C.gold.withValues(alpha: .5),
+                  _C.gold.withValues(alpha: .5),
+                  Colors.transparent,
+                ],
+                stops: const [0.0, 0.25, 0.75, 1.0],
+              ),
+            ),
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Oblečeno (5 slotů) ─────────────────────────
+            const Text(
+              'OBLEČENO',
+              style: TextStyle(
+                color: _C.gold,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: _C.card,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: _C.border),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: vsechny.map((t) {
+                  final predmetId = HerniData.oblecene[t.nazev];
+                  final predmet = predmetId != null
+                      ? _katalog.firstWhere(
+                          (p) => p.id == predmetId,
+                          orElse: () => _katalog.first,
+                        )
+                      : null;
+                  return GestureDetector(
+                    onTap: predmet != null
+                        ? () =>
+                              setState(() => HerniData.oblecene.remove(t.nazev))
+                        : null,
+                    child: Column(
+                      children: [
+                        predmet != null
+                            ? ObleceniIkonka(predmet: predmet, size: 52)
+                            : Container(
+                                width: 52,
+                                height: 52,
+                                decoration: BoxDecoration(
+                                  color: _C.card2,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: _C.border,
+                                    width: 1.2,
+                                    style: BorderStyle.solid,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    t.emoji,
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      color: _C.textS,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                        const SizedBox(height: 4),
+                        Text(
+                          t.nazev,
+                          style: const TextStyle(color: _C.textS, fontSize: 9),
+                        ),
+                        if (predmet != null)
+                          const Text(
+                            '× svléct',
+                            style: TextStyle(color: _C.red, fontSize: 8),
+                          ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ── Inventář ────────────────────────────────────
+            Row(
+              children: [
+                const Text(
+                  'V BATOHU',
+                  style: TextStyle(
+                    color: _C.gold,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _C.gold.withValues(alpha: .12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '${vlastneneList.length}',
+                    style: const TextStyle(
+                      color: _C.gold,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            if (vlastneneList.isEmpty)
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: _C.card,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _C.border),
+                ),
+                child: const Center(
+                  child: Column(
+                    children: [
+                      Text('🎒', style: TextStyle(fontSize: 36)),
+                      SizedBox(height: 8),
+                      Text(
+                        'Batoh je prázdný',
+                        style: TextStyle(color: _C.textS, fontSize: 14),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Nakup předměty v Obchodě',
+                        style: TextStyle(color: _C.textS, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: .82,
+                ),
+                itemCount: vlastneneList.length,
+                itemBuilder: (ctx, i) {
+                  final p = vlastneneList[i];
+                  final jeObleceny = HerniData.oblecene[p.typ.nazev] == p.id;
+                  return GestureDetector(
+                    onTap: () => setState(() {
+                      if (jeObleceny)
+                        HerniData.oblecene.remove(p.typ.nazev);
+                      else
+                        HerniData.oblecene[p.typ.nazev] = p.id;
+                    }),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: jeObleceny
+                            ? p.vzacnost.barva.withValues(alpha: .08)
+                            : _C.card,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: jeObleceny ? p.vzacnost.barva : _C.border,
+                          width: jeObleceny ? 1.5 : 1,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          ObleceniIkonka(predmet: p, size: 52),
+                          const SizedBox(height: 6),
+                          Text(
+                            p.nazev,
+                            style: const TextStyle(
+                              color: _C.text,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            jeObleceny ? '✓ Oblečeno' : 'Klepni k obléknutí',
+                            style: TextStyle(
+                              color: jeObleceny ? p.vzacnost.barva : _C.textS,
+                              fontSize: 8,
+                              fontWeight: jeObleceny
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
           ],
         ),
       ),
