@@ -60,6 +60,7 @@ flutter:
     - assets/logo.png
     - assets/obleceni/
     - assets/ikony/
+    - assets/aliance/
     - assets/batoh.png
   # To add assets to your application, add an assets section, like this:
   # assets:
